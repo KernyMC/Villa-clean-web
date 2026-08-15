@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Fraunces", serif;
+  --font-sans: "Inter", sans-serif;
+
+  --color-cream: #f4f1ea;
+  --color-ink: #1c2620;
+  --color-forest: #3e5245;
+  --color-brass: #b08d57;
+  --color-line: #c9c2b4;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  input[type="range"] {
+    accent-color: var(--color-forest);
+  }
+
+  ::selection {
+    background: var(--color-brass);
+    color: var(--color-cream);
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 2px;
+  }
+
+  .font-serif-opt {
+    font-variation-settings: "SOFT" 60;
+  }
+}
+
+@layer components {
+  .bg-section-tint {
+    background: color-mix(in srgb, var(--color-forest) 7%, var(--color-cream) 93%);
+  }
+
+  .bg-section-accent {
+    background: color-mix(in srgb, var(--color-brass) 12%, var(--color-cream) 88%);
+  }
+
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 600ms ease-out,
+      transform 600ms ease-out;
+  }
+
+  [data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

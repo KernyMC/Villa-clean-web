@@ -1,0 +1,28 @@
+---
+import { checklist } from "../data/site";
+---
+
+<section data-reveal class="bg-section-tint">
+ <div class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-14">
+    What's included
+  </h2>
+  <div class="grid gap-12 gap-x-16" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+    {checklist.map((room) => (
+      <div>
+        <h3 class="font-serif font-serif-opt font-medium text-[1.15rem] border-b border-line pb-3.5 m-0 mb-4.5">
+          {room.title}
+        </h3>
+        <ul class="m-0 p-0 list-none flex flex-col gap-3">
+          {room.items.map((line) => (
+            <li class="text-sm text-ink pl-4.5 relative">
+              <span class="absolute left-0 top-2 w-1.5 h-1.5 bg-brass inline-block"></span>
+              {line}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+ </div>
+</section>

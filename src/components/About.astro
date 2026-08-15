@@ -1,0 +1,40 @@
+---
+import { getSiteImages, urlFor } from "../lib/sanity";
+
+const siteImages = await getSiteImages();
+const aboutImageUrl = siteImages?.aboutImage?.asset
+  ? urlFor(siteImages.aboutImage).width(800).height(1000).fit("crop").auto("format").url()
+  : undefined;
+const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
+---
+
+<section id="about" data-reveal class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+  <div class="grid gap-16 items-center" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+    <div
+      class="w-full aspect-[4/5] border border-line flex items-center justify-center p-6 text-center overflow-hidden"
+      style={aboutImageUrl ? undefined : "background: repeating-linear-gradient(135deg, #E8E3D8 0px, #E8E3D8 14px, #F4F1EA 14px, #F4F1EA 28px);"}
+    >
+      {aboutImageUrl ? (
+        <img src={aboutImageUrl} alt={aboutImageAlt} class="w-full h-full object-cover" loading="lazy" />
+      ) : (
+        <span aria-hidden="true" class="font-mono text-xs text-ink tracking-wide">PHOTOGRAPH — founder portrait</span>
+      )}
+    </div>
+    <div>
+      <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-8">
+        About
+      </h2>
+      <p class="max-w-[36em] text-[17px] text-ink m-0 mb-5">
+        I started Villa Home Detail after years of managing households for families across West Austin.
+        I kept meeting the same problem: a good cleaner who disappeared after two visits, or a service
+        that treated every home the same. Neither respected what was actually being asked, which was
+        trust.
+      </p>
+      <p class="max-w-[36em] text-[17px] text-ink m-0 mb-8">
+        We built something smaller and more deliberate. Every home keeps the same two-person team.
+        Every visit follows a protocol you set, not one we impose. That is the whole idea.
+      </p>
+      <p class="font-serif font-serif-opt italic text-[1.1rem] m-0">— Founder, Villa Home Detail</p>
+    </div>
+  </div>
+</section>

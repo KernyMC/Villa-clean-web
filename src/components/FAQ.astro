@@ -1,0 +1,41 @@
+---
+import { faqItems } from "../data/site";
+---
+
+<section data-reveal class="bg-section-tint">
+ <div class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-4xl mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-10">
+    Frequently asked
+  </h2>
+  <div class="flex flex-col">
+    {faqItems.map((f) => (
+      <div class="faq-item border-t border-line">
+        <button
+          type="button"
+          class="faq-toggle w-full text-left bg-none border-none py-5.5 flex justify-between items-center gap-4 cursor-pointer text-ink text-[17px] font-sans"
+          aria-expanded="false"
+        >
+          <span>{f.question}</span>
+          <span aria-hidden="true" class="faq-indicator text-brass text-lg flex-shrink-0">+</span>
+        </button>
+        <p class="faq-answer hidden m-0 mb-6 max-w-[38em] text-ink text-base">{f.answer}</p>
+      </div>
+    ))}
+  </div>
+ </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".faq-item").forEach((item) => {
+    const toggle = item.querySelector<HTMLButtonElement>(".faq-toggle")!;
+    const answer = item.querySelector<HTMLParagraphElement>(".faq-answer")!;
+    const indicator = item.querySelector<HTMLSpanElement>(".faq-indicator")!;
+
+    toggle.addEventListener("click", () => {
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!isOpen));
+      answer.classList.toggle("hidden", isOpen);
+      indicator.textContent = isOpen ? "+" : "−";
+    });
+  });
+</script>

@@ -1,0 +1,37 @@
+---
+interface Props {
+  stroke?: string;
+  textColor?: string;
+  subTextColor?: string;
+  class?: string;
+}
+
+const {
+  stroke = "#3E5245",
+  textColor = "#1C2620",
+  subTextColor = "rgba(28,38,32,0.6)",
+  class: className = "",
+} = Astro.props;
+---
+
+<a href="#top" aria-label="Villa Home Detail — home" class={`flex items-center gap-4 no-underline flex-shrink-0 ${className}`}>
+  <svg viewBox="0 0 300 300" class="h-full w-auto block" aria-hidden="true">
+    <polyline points="20,110 150,280 280,110" fill="none" stroke={stroke} stroke-width="22" stroke-linecap="butt" stroke-linejoin="miter"></polyline>
+    <polyline points="80,150 150,40 220,150" fill="none" stroke={stroke} stroke-width="22" stroke-linecap="butt" stroke-linejoin="miter"></polyline>
+  </svg>
+  <span class="w-px self-stretch block" style={`background:${stroke === "#3E5245" ? "#B08D57" : "#B08D57"}`}></span>
+  <span class="flex flex-col items-start gap-1">
+    <span
+      class="font-serif font-serif-opt uppercase tracking-[0.18em] text-base font-medium leading-none"
+      style={`color:${textColor}`}
+    >
+      Villa
+    </span>
+    <span
+      class="font-sans uppercase tracking-[0.2em] text-[10px] leading-none"
+      style={`color:${subTextColor}`}
+    >
+      Home Detail
+    </span>
+  </span>
+</a>

@@ -1,0 +1,17 @@
+---
+import { trustItems } from "../data/site";
+---
+
+<section
+  data-reveal
+  class="px-5 sm:px-8 lg:px-20 py-10 max-w-7xl mx-auto"
+>
+  <div class="flex flex-wrap gap-10 gap-x-24 justify-center items-center">
+    {trustItems.map((item) => (
+      <span class="flex items-center gap-5 text-sm tracking-wide text-ink">
+        <img src={item.icon} alt="" width="80" height="80" class="w-16 h-16 sm:w-20 sm:h-20 shrink-0" loading="lazy" />
+        {item.label}
+      </span>
+    ))}
+  </div>
+</section>

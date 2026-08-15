@@ -1,0 +1,136 @@
+---
+import Logo from "./Logo.astro";
+import { contact } from "../data/site";
+
+const navLinks = [
+  { href: "#services", label: "Services" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "#areas", label: "Areas" },
+  { href: "#about", label: "About" },
+];
+---
+
+<header
+  id="site-header"
+  class="fixed top-0 left-0 right-0 z-[100] bg-transparent transition-[padding,transform,opacity,background-color,backdrop-filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] py-7 data-[scrolled=true]:py-3.5 data-[scrolled=true]:bg-ink/95 data-[scrolled=true]:backdrop-blur-sm data-[hidden=true]:-translate-y-full data-[hidden=true]:opacity-0"
+  data-scrolled="false"
+  data-hidden="false"
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
+    <Logo class="h-11 md:h-11 transition-[height] duration-300" stroke="#F4F1EA" textColor="#F4F1EA" subTextColor="rgba(244,241,234,0.6)" />
+
+    <nav aria-label="Primary" class="hidden md:flex gap-8">
+      {navLinks.map((link) => (
+        <a href={link.href} class="text-cream no-underline text-sm tracking-wide hover:text-brass">
+          {link.label}
+        </a>
+      ))}
+    </nav>
+    <div class="hidden md:flex items-center gap-5">
+      <a href={contact.phoneHref} class="text-cream text-sm no-underline hover:text-brass">{contact.phone}</a>
+      <a
+        href="#pricing"
+        class="bg-brass text-ink no-underline px-5.5 py-3 text-sm tracking-wide rounded-sm"
+      >
+        Get a Quote
+      </a>
+    </div>
+
+    <div class="flex md:hidden items-center gap-3.5">
+      <a
+        href="#pricing"
+        class="bg-brass text-ink no-underline px-4.5 py-2.5 text-[13px] tracking-wide rounded-sm"
+      >
+        Get a Quote
+      </a>
+      <button
+        type="button"
+        id="mobile-nav-toggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        class="w-10 h-10 border border-cream/25 bg-none flex flex-col items-center justify-center gap-1.5 cursor-pointer rounded-sm flex-shrink-0"
+      >
+        <span class="w-4.5 h-px bg-cream block"></span>
+        <span class="w-4.5 h-px bg-cream block"></span>
+        <span class="w-4.5 h-px bg-cream block"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div
+  id="mobile-nav"
+  class="fixed inset-0 z-[200] bg-ink hidden flex-col items-center justify-center gap-9"
+>
+  <button
+    type="button"
+    id="mobile-nav-close"
+    aria-label="Close menu"
+    class="absolute top-6 right-5 sm:right-8 w-10 h-10 border border-cream/25 bg-none cursor-pointer rounded-sm text-[22px] text-cream"
+  >
+    &times;
+  </button>
+  {navLinks.map((link) => (
+    <a
+      href={link.href}
+      class="mobile-nav-link font-serif font-serif-opt text-2xl text-cream no-underline"
+    >
+      {link.label}
+    </a>
+  ))}
+</div>
+
+<script>
+  const header = document.getElementById("site-header");
+  let lastScrollY = window.scrollY;
+  let scrollStopTimer: ReturnType<typeof setTimeout>;
+
+  const onScroll = () => {
+    const currentY = Math.max(0, window.scrollY);
+    const delta = currentY - lastScrollY;
+
+    header?.setAttribute("data-scrolled", currentY > 24 ? "true" : "false");
+
+    if (currentY > 160 && delta > 12) {
+      header?.setAttribute("data-hidden", "true");
+    } else if (delta < -4 || currentY <= 160) {
+      header?.setAttribute("data-hidden", "false");
+    }
+
+    lastScrollY = currentY;
+
+    clearTimeout(scrollStopTimer);
+    scrollStopTimer = setTimeout(() => header?.setAttribute("data-hidden", "false"), 250);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const setHeaderHeightVar = () => {
+    if (!header) return;
+    document.documentElement.style.setProperty("--header-h", `${header.offsetHeight}px`);
+  };
+  setHeaderHeightVar();
+  if (header) new ResizeObserver(setHeaderHeightVar).observe(header);
+  window.addEventListener("resize", setHeaderHeightVar, { passive: true });
+
+  const mobileNav = document.getElementById("mobile-nav");
+  const openBtn = document.getElementById("mobile-nav-toggle");
+  const closeBtn = document.getElementById("mobile-nav-close");
+  const links = document.querySelectorAll(".mobile-nav-link");
+
+  const openNav = () => {
+    mobileNav?.classList.remove("hidden");
+    mobileNav?.classList.add("flex");
+    openBtn?.setAttribute("aria-expanded", "true");
+  };
+  const closeNav = () => {
+    mobileNav?.classList.add("hidden");
+    mobileNav?.classList.remove("flex");
+    openBtn?.setAttribute("aria-expanded", "false");
+  };
+
+  openBtn?.addEventListener("click", openNav);
+  closeBtn?.addEventListener("click", closeNav);
+  links.forEach((link) => link.addEventListener("click", closeNav));
+</script>

@@ -1,0 +1,18 @@
+---
+import { areas } from "../data/site";
+---
+
+<section id="areas" data-reveal class="bg-section-tint">
+ <div class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-10">
+    Service areas
+  </h2>
+  <div class="flex gap-10 flex-wrap">
+    {areas.map((a) => (
+      <a href={a.href} class="text-forest underline text-lg">
+        {a.name}
+      </a>
+    ))}
+  </div>
+ </div>
+</section>

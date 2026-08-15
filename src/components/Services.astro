@@ -1,0 +1,17 @@
+---
+import { services } from "../data/site";
+---
+
+<section id="services" data-reveal class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-14">
+    Services
+  </h2>
+  <div class="grid gap-12" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    {services.map((s) => (
+      <div class="border-t border-brass pt-6">
+        <h3 class="font-serif font-serif-opt font-medium text-[1.3rem] m-0 mb-3.5">{s.title}</h3>
+        <p class="m-0 text-ink text-base">{s.body}</p>
+      </div>
+    ))}
+  </div>
+</section>

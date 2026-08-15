@@ -1,0 +1,33 @@
+---
+import Logo from "./Logo.astro";
+import { contact } from "../data/site";
+---
+
+<footer class="bg-ink text-cream px-5 sm:px-8 lg:px-20 pt-18 sm:pt-24 lg:pt-30 pb-12">
+  <div class="max-w-7xl mx-auto grid gap-12" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+    <div>
+      <div class="mb-4.5">
+        <Logo class="h-10" stroke="#F4F1EA" textColor="#F4F1EA" subTextColor="#F4F1EA" />
+      </div>
+      <p class="text-[15px] text-line max-w-[24em] m-0">Immaculate homes, handled quietly.</p>
+    </div>
+    <div class="text-[15px] text-line flex flex-col gap-1.5">
+      <span>Villa Home Detail</span>
+      <span>ADDRESS_TBD</span>
+      <span>Austin, TX</span>
+      <a href={contact.phoneHref} class="text-cream no-underline hover:text-brass">{contact.phone}</a>
+    </div>
+    <div class="text-[15px] text-line flex flex-col gap-1.5">
+      <span>Monday–Saturday</span>
+      <span>8:00am – 6:00pm</span>
+    </div>
+    <div>
+      <a href="#pricing" class="inline-block bg-forest text-cream no-underline px-6.5 py-3.5 text-sm tracking-wide rounded-sm">
+        Get your free quote
+      </a>
+    </div>
+  </div>
+  <p class="max-w-7xl mx-auto mt-14 pt-6 border-t border-forest text-[13px] text-line">
+    © 2026 Villa Home Detail. Austin, Texas.
+  </p>
+</footer>

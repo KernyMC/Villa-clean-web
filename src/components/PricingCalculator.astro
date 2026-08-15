@@ -1,0 +1,209 @@
+---
+import { frequencyOptions } from "../data/site";
+---
+
+<section id="pricing" data-reveal class="bg-section-tint">
+ <div class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-3">
+    Estimate your quote
+  </h2>
+  <p class="max-w-[40em] text-ink m-0 mb-14">
+    Adjust the details below for an instant estimate. Every home is confirmed with an in-person
+    walkthrough.
+  </p>
+
+  <div class="grid gap-16" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));">
+    <div class="flex flex-col gap-9">
+      <div>
+        <label for="sqft" class="flex justify-between text-sm tracking-wide mb-2.5">
+          <span>Square footage</span>
+          <span id="sqft-label" class="tabular-nums">3,200 sq ft</span>
+        </label>
+        <input id="sqft" type="range" min="1500" max="8000" step="100" value="3200" class="w-full" />
+      </div>
+
+      <div class="flex gap-10 flex-wrap">
+        <div>
+          <span class="block text-sm tracking-wide mb-2.5">Bedrooms</span>
+          <div class="flex items-center gap-4">
+            <button
+              type="button"
+              id="dec-bed"
+              aria-label="Decrease bedrooms"
+              class="w-9 h-9 border border-line bg-none text-ink text-base rounded-sm cursor-pointer"
+            >
+              &minus;
+            </button>
+            <span id="bedrooms-value" class="min-w-4 text-center tabular-nums text-base">4</span>
+            <button
+              type="button"
+              id="inc-bed"
+              aria-label="Increase bedrooms"
+              class="w-9 h-9 border border-line bg-none text-ink text-base rounded-sm cursor-pointer"
+            >
+              +
+            </button>
+          </div>
+        </div>
+        <div>
+          <span class="block text-sm tracking-wide mb-2.5">Bathrooms</span>
+          <div class="flex items-center gap-4">
+            <button
+              type="button"
+              id="dec-bath"
+              aria-label="Decrease bathrooms"
+              class="w-9 h-9 border border-line bg-none text-ink text-base rounded-sm cursor-pointer"
+            >
+              &minus;
+            </button>
+            <span id="bathrooms-value" class="min-w-4 text-center tabular-nums text-base">3</span>
+            <button
+              type="button"
+              id="inc-bath"
+              aria-label="Increase bathrooms"
+              class="w-9 h-9 border border-line bg-none text-ink text-base rounded-sm cursor-pointer"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <span class="block text-sm tracking-wide mb-2.5">Frequency</span>
+        <div role="group" aria-label="Frequency" class="flex flex-wrap gap-2.5" id="frequency-group">
+          {frequencyOptions.map((f, i) => (
+            <button
+              type="button"
+              data-freq={f.value}
+              aria-pressed={i === 1 ? "true" : "false"}
+              class:list={[
+                "freq-btn px-5 py-3 text-sm tracking-wide rounded-sm cursor-pointer border",
+                i === 1 ? "bg-forest text-cream border-forest" : "bg-none text-ink border-line",
+              ]}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="border border-line p-7 sm:p-10 lg:p-12 flex flex-col justify-center gap-2">
+      <span class="text-[13px] tracking-wider uppercase text-ink">Estimated visit price</span>
+      <span
+        id="price-label"
+        class="font-serif font-serif-opt font-medium text-[clamp(2.6rem,5vw,3.6rem)] tabular-nums leading-none"
+      >
+        $261
+      </span>
+      <span class="text-sm text-ink mt-3">Your first visit is a deep clean, quoted separately.</span>
+
+      <p id="quote-locked-message" class="hidden mt-6 text-[15px] text-ink">
+        Quote saved. We will call within one business day to confirm your walkthrough.
+      </p>
+
+      <form id="quote-form" class="flex gap-2.5 mt-6 flex-wrap">
+        <label for="email" class="absolute -left-[9999px]">Email address</label>
+        <input
+          id="email"
+          type="email"
+          required
+          placeholder="you@email.com"
+          class="flex-1 min-w-[180px] border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm"
+        />
+        <button
+          type="submit"
+          class="bg-forest text-cream border-none px-5.5 py-3 text-sm tracking-wide rounded-sm cursor-pointer"
+        >
+          Lock this quote
+        </button>
+      </form>
+    </div>
+  </div>
+ </div>
+</section>
+
+<script>
+  const state = {
+    sqft: 3200,
+    bedrooms: 4,
+    bathrooms: 3,
+    frequency: "biweekly",
+  };
+
+  const multipliers: Record<string, number> = { weekly: 0.8, biweekly: 0.88, monthly: 1.0, onetime: 1.35 };
+  const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+  const sqftInput = document.getElementById("sqft") as HTMLInputElement;
+  const sqftLabel = document.getElementById("sqft-label")!;
+  const bedroomsValue = document.getElementById("bedrooms-value")!;
+  const bathroomsValue = document.getElementById("bathrooms-value")!;
+  const priceLabel = document.getElementById("price-label")!;
+  const freqButtons = document.querySelectorAll<HTMLButtonElement>(".freq-btn");
+
+  function computePrice() {
+    const base = state.sqft * 0.085;
+    const bedExtra = Math.max(0, state.bedrooms - 3) * 25;
+    const bathExtra = Math.max(0, state.bathrooms - 3) * 40;
+    const subtotal = base + bedExtra + bathExtra;
+    const mult = multipliers[state.frequency];
+    return Math.max(250, Math.round(subtotal * mult));
+  }
+
+  function render() {
+    sqftLabel.textContent = `${state.sqft.toLocaleString()} sq ft`;
+    bedroomsValue.textContent = String(state.bedrooms);
+    bathroomsValue.textContent = String(state.bathrooms);
+    priceLabel.textContent = currency.format(computePrice());
+    freqButtons.forEach((btn) => {
+      const active = btn.dataset.freq === state.frequency;
+      btn.setAttribute("aria-pressed", String(active));
+      btn.classList.toggle("bg-forest", active);
+      btn.classList.toggle("text-cream", active);
+      btn.classList.toggle("border-forest", active);
+      btn.classList.toggle("bg-none", !active);
+      btn.classList.toggle("text-ink", !active);
+      btn.classList.toggle("border-line", !active);
+    });
+  }
+
+  sqftInput.addEventListener("input", () => {
+    state.sqft = Number(sqftInput.value);
+    render();
+  });
+
+  document.getElementById("inc-bed")!.addEventListener("click", () => {
+    state.bedrooms = Math.min(8, state.bedrooms + 1);
+    render();
+  });
+  document.getElementById("dec-bed")!.addEventListener("click", () => {
+    state.bedrooms = Math.max(1, state.bedrooms - 1);
+    render();
+  });
+  document.getElementById("inc-bath")!.addEventListener("click", () => {
+    state.bathrooms = Math.min(8, state.bathrooms + 1);
+    render();
+  });
+  document.getElementById("dec-bath")!.addEventListener("click", () => {
+    state.bathrooms = Math.max(1, state.bathrooms - 1);
+    render();
+  });
+
+  freqButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.frequency = btn.dataset.freq!;
+      render();
+    });
+  });
+
+  const quoteForm = document.getElementById("quote-form") as HTMLFormElement;
+  const lockedMessage = document.getElementById("quote-locked-message")!;
+  quoteForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    quoteForm.classList.add("hidden");
+    lockedMessage.classList.remove("hidden");
+  });
+
+  render();
+</script>

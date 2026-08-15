@@ -1,0 +1,131 @@
+---
+import { steps } from "../data/site";
+
+const icons = ["/assets/1-tell-about-u.png", "/assets/2-schedule.png", "/assets/3-our-team.png"];
+---
+
+<section data-reveal class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-14 text-center">
+    How it works
+  </h2>
+  <div class="how-track relative">
+    <svg class="how-lines" aria-hidden="true">
+      <path class="how-line" data-line="0"></path>
+      <path class="how-line" data-line="1"></path>
+      <circle class="how-node" data-node="0" r="4"></circle>
+      <circle class="how-node" data-node="1" r="4"></circle>
+      <circle class="how-node" data-node="2" r="4"></circle>
+    </svg>
+    <div class="grid gap-12" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+      {steps.map((step, i) => (
+        <div class="text-center">
+          <img src={icons[i]} alt="" loading="lazy" class="block mx-auto w-28 h-28 object-contain" />
+          <span class="how-anchor block h-2" data-anchor={i} aria-hidden="true"></span>
+          <span class="how-num inline-block font-serif font-serif-opt text-brass text-[2.2rem] mb-4">
+            {step.num}
+          </span>
+          <h3 class="font-serif font-serif-opt font-medium text-xl m-0 mb-3">{step.title}</h3>
+          <p class="m-0 text-ink text-base max-w-[26em] mx-auto">{step.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .how-line {
+    fill: none;
+    stroke: var(--color-brass);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.55;
+  }
+
+  .how-node {
+    fill: var(--color-brass);
+  }
+
+  .how-track .grid {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const track = document.querySelector<HTMLElement>(".how-track");
+  const svg = track?.querySelector<SVGSVGElement>(".how-lines");
+  const lines = [...(track?.querySelectorAll<SVGPathElement>(".how-line") ?? [])];
+  const nodes = [...(track?.querySelectorAll<SVGCircleElement>(".how-node") ?? [])];
+  const anchors = [...(track?.querySelectorAll<HTMLElement>(".how-anchor") ?? [])];
+
+  if (track && svg && lines.length === 2 && nodes.length === 3 && anchors.length === 3) {
+    let timeline: gsap.core.Timeline | null = null;
+
+    const layout = () => {
+      const trackRect = track.getBoundingClientRect();
+      const points = anchors.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left - trackRect.left + r.width / 2, y: r.top - trackRect.top + r.height / 2 };
+      });
+
+      // Same row only — if the grid has wrapped to a single column, skip the
+      // connector entirely rather than draw a line straight down the stack.
+      const sameRow = Math.abs(points[0].y - points[1].y) < 4 && Math.abs(points[1].y - points[2].y) < 4;
+      svg.style.display = sameRow ? "block" : "none";
+      if (!sameRow) return;
+
+      svg.setAttribute("viewBox", `0 0 ${trackRect.width} ${trackRect.height}`);
+
+      nodes.forEach((node, i) => {
+        node.setAttribute("cx", String(points[i].x));
+        node.setAttribute("cy", String(points[i].y));
+      });
+
+      [0, 1].forEach((i) => {
+        const a = points[i];
+        const b = points[i + 1];
+        const d = `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+        const line = lines[i];
+        line.setAttribute("d", d);
+        const length = line.getTotalLength();
+        line.style.strokeDasharray = `${length}`;
+        line.style.strokeDashoffset = `${length}`;
+      });
+
+      gsap.set(nodes, { scale: 0, transformOrigin: "50% 50%" });
+
+      timeline?.scrollTrigger?.kill();
+      timeline?.kill();
+      timeline = gsap.timeline({
+        scrollTrigger: { trigger: track, start: "top 75%", once: true },
+      });
+      timeline
+        .to(nodes[0], { scale: 1, duration: 0.3, ease: "back.out(2)" })
+        .to(lines[0], { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut" }, "-=0.05")
+        .to(nodes[1], { scale: 1, duration: 0.3, ease: "back.out(2)" }, "-=0.1")
+        .to(lines[1], { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut" }, "-=0.05")
+        .to(nodes[2], { scale: 1, duration: 0.3, ease: "back.out(2)" }, "-=0.1");
+    };
+
+    layout();
+    window.addEventListener("resize", () => {
+      ScrollTrigger.refresh();
+      layout();
+    });
+  }
+</script>

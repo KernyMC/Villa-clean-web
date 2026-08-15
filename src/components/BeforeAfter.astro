@@ -1,0 +1,278 @@
+---
+import { beforeAfterFallbackPairs } from "../data/site";
+import { getSiteImages, urlFor } from "../lib/sanity";
+
+const siteImages = await getSiteImages();
+
+const pairs =
+  siteImages?.beforeAfterPairs && siteImages.beforeAfterPairs.length > 0
+    ? siteImages.beforeAfterPairs.map((pair) => ({
+        label: pair.label,
+        beforeUrl: pair.beforeImage?.asset
+          ? urlFor(pair.beforeImage).width(1000).height(671).fit("crop").auto("format").url()
+          : undefined,
+        beforeAlt: pair.beforeImage?.alt || `Before — ${pair.label}`,
+        afterUrl: pair.afterImage?.asset
+          ? urlFor(pair.afterImage).width(1000).height(671).fit("crop").auto("format").url()
+          : undefined,
+        afterAlt: pair.afterImage?.alt || `After — ${pair.label}`,
+      }))
+    : beforeAfterFallbackPairs.map((pair) => ({
+        label: pair.label,
+        beforeUrl: pair.beforeUrl,
+        beforeAlt: `Before — ${pair.label}`,
+        afterUrl: pair.afterUrl,
+        afterAlt: `After — ${pair.label}`,
+      }));
+---
+
+<section data-reveal class="px-5 sm:px-8 lg:px-12 py-18 sm:py-24 lg:py-30 max-w-[100rem] mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-14">
+    Before and after
+  </h2>
+
+  <div class="ba-stack relative w-full" style="height: clamp(360px, 46vw, 620px);">
+    <div
+      class="pointer-events-none absolute inset-x-0 top-1/2 mx-auto h-2/3 w-[70%] -translate-y-1/2 rounded-full bg-ink/[0.06] blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div
+      class="ba-cards absolute inset-0 flex items-center justify-center outline-none"
+      style="perspective: 1600px;"
+      tabindex="0"
+      role="group"
+      aria-label="Before and after carousel"
+    >
+      {pairs.map((pair, i) => (
+        <div
+          class="ba-card absolute overflow-hidden rounded-sm shadow-2xl will-change-transform"
+          data-index={i}
+          style="width: clamp(340px, 50vw, 660px); aspect-ratio: 1000 / 671;"
+        >
+          <div class="ba-simple absolute inset-0">
+            {pair.afterUrl ? (
+              <img src={pair.afterUrl} alt={pair.afterAlt} class="h-full w-full object-cover" loading="lazy" draggable="false" />
+            ) : (
+              <div class="flex h-full w-full items-center justify-center bg-line/40 font-mono text-[11px]">
+                {pair.label}
+              </div>
+            )}
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div>
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 p-4">
+              <span class="font-serif font-serif-opt text-lg text-cream">{pair.label}</span>
+            </div>
+          </div>
+
+          <div class="ba-slider absolute inset-0 hidden select-none" style="touch-action: none;">
+            <div
+              class="absolute inset-0 flex items-center justify-center text-center"
+              style={pair.afterUrl ? undefined : "background: repeating-linear-gradient(135deg, #E0DACB 0px, #E0DACB 12px, #F4F1EA 12px, #F4F1EA 24px);"}
+            >
+              {pair.afterUrl ? (
+                <img src={pair.afterUrl} alt={pair.afterAlt} class="h-full w-full object-cover" loading="lazy" draggable="false" />
+              ) : (
+                <span aria-hidden="true" class="font-mono text-[11px]">AFTER — {pair.label}</span>
+              )}
+              {pair.afterUrl && (
+                <span aria-hidden="true" class="absolute top-3 right-3 font-mono text-[10px] tracking-[0.08em] uppercase text-cream bg-ink/60 px-2 py-1">
+                  After
+                </span>
+              )}
+            </div>
+            <div
+              class="ba-before absolute inset-0 overflow-hidden flex items-center justify-center text-center"
+              style={`clip-path: inset(0 50% 0 0); ${pair.beforeUrl ? "" : "background: repeating-linear-gradient(135deg, #D8CFB8 0px, #D8CFB8 12px, #EDE8DC 12px, #EDE8DC 24px);"}`}
+            >
+              {pair.beforeUrl ? (
+                <img src={pair.beforeUrl} alt={pair.beforeAlt} class="h-full w-full object-cover" loading="lazy" draggable="false" />
+              ) : (
+                <span aria-hidden="true" class="font-mono text-[11px] w-[280px]">BEFORE — {pair.label}</span>
+              )}
+              {pair.beforeUrl && (
+                <span aria-hidden="true" class="absolute top-3 left-3 font-mono text-[10px] tracking-[0.08em] uppercase text-cream bg-ink/60 px-2 py-1">
+                  Before
+                </span>
+              )}
+            </div>
+            <div
+              class="ba-handle absolute top-0 bottom-0 w-0.5 bg-brass cursor-ew-resize"
+              style="left: 50%;"
+              role="slider"
+              aria-label={`Before and after comparison — ${pair.label}`}
+              aria-valuenow="50"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              tabindex="-1"
+            >
+              <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-cream border border-brass"></span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button type="button" class="ba-prev absolute left-0 top-1/2 -translate-y-1/2 z-20 grid h-10 w-10 place-items-center rounded-full border border-line bg-cream/90 text-ink transition hover:bg-cream" aria-label="Previous">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 2 4 8l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" class="ba-next absolute right-0 top-1/2 -translate-y-1/2 z-20 grid h-10 w-10 place-items-center rounded-full border border-line bg-cream/90 text-ink transition hover:bg-cream" aria-label="Next">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6 2 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div class="mt-8 flex items-center justify-center gap-2.5">
+    {pairs.map((pair, i) => (
+      <button
+        type="button"
+        class="ba-dot h-2 w-2 rounded-full bg-ink/25 transition"
+        data-index={i}
+        aria-label={`Go to ${pair.label}`}
+      >
+      </button>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+
+  function wrapIndex(n: number, len: number) {
+    return ((n % len) + len) % len;
+  }
+
+  function signedOffset(i: number, active: number, len: number) {
+    const raw = i - active;
+    if (len <= 1) return raw;
+    const alt = raw > 0 ? raw - len : raw + len;
+    return Math.abs(alt) < Math.abs(raw) ? alt : raw;
+  }
+
+  document.querySelectorAll<HTMLDivElement>(".ba-stack").forEach((stack) => {
+    const stage = stack.querySelector<HTMLDivElement>(".ba-cards")!;
+    const cards = Array.from(stack.querySelectorAll<HTMLDivElement>(".ba-card"));
+    const dots = Array.from(stack.parentElement!.querySelectorAll<HTMLButtonElement>(".ba-dot"));
+    const prevBtn = stack.querySelector<HTMLButtonElement>(".ba-prev")!;
+    const nextBtn = stack.querySelector<HTMLButtonElement>(".ba-next")!;
+    const len = cards.length;
+    if (!len) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const maxOffset = Math.max(1, Math.floor(Math.min(len, 5) / 2));
+    const stepDeg = 20;
+    const arcDrop = 16;
+    const liftPx = 22;
+    const activeScale = 1;
+    const inactiveScale = 0.88;
+    const tiltXDeg = 10;
+    const depthPx = 110;
+
+    let active = 0;
+    let hovering = false;
+
+    const setupSlider = (card: HTMLDivElement) => {
+      const slider = card.querySelector<HTMLDivElement>(".ba-slider")!;
+      const before = slider.querySelector<HTMLDivElement>(".ba-before")!;
+      const handle = slider.querySelector<HTMLDivElement>(".ba-handle")!;
+
+      const setPos = (clientX: number) => {
+        const rect = slider.getBoundingClientRect();
+        let pct = ((clientX - rect.left) / rect.width) * 100;
+        pct = Math.max(0, Math.min(100, pct));
+        before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+        handle.style.left = `${pct}%`;
+        handle.setAttribute("aria-valuenow", String(Math.round(pct)));
+      };
+
+      handle.addEventListener("pointerdown", (e) => {
+        if (!card.classList.contains("is-active")) return;
+        handle.setPointerCapture(e.pointerId);
+        setPos(e.clientX);
+      });
+      handle.addEventListener("pointermove", (e) => {
+        if (card.classList.contains("is-active") && e.buttons === 1) setPos(e.clientX);
+      });
+      handle.addEventListener("keydown", (e) => {
+        if (!card.classList.contains("is-active")) return;
+        const current = parseFloat(handle.getAttribute("aria-valuenow") || "50");
+        const rect = slider.getBoundingClientRect();
+        if (e.key === "ArrowLeft") setPos(rect.left + (rect.width * Math.max(0, current - 5)) / 100);
+        if (e.key === "ArrowRight") setPos(rect.left + (rect.width * Math.min(100, current + 5)) / 100);
+      });
+    };
+
+    cards.forEach((card, i) => {
+      setupSlider(card);
+      card.addEventListener("click", () => {
+        if (i !== active) setActive(i);
+      });
+    });
+
+    function render(animate: boolean) {
+      cards.forEach((card, i) => {
+        const off = signedOffset(i, active, len);
+        const abs = Math.abs(off);
+        const isActive = off === 0;
+        const visible = abs <= maxOffset;
+
+        card.classList.toggle("is-active", isActive);
+        card.querySelector<HTMLDivElement>(".ba-simple")!.classList.toggle("hidden", isActive);
+        card.querySelector<HTMLDivElement>(".ba-slider")!.classList.toggle("hidden", !isActive);
+        card.style.pointerEvents = visible ? "auto" : "none";
+        card.style.zIndex = String(100 - abs);
+
+        const rect = cards[active]!.getBoundingClientRect();
+        const spacing = Math.max(20, rect.width * 0.42);
+
+        const target = {
+          x: off * spacing,
+          y: abs * arcDrop + (isActive ? -liftPx : 0),
+          z: -abs * depthPx,
+          rotationZ: off * stepDeg,
+          rotationX: isActive ? 0 : tiltXDeg,
+          scale: isActive ? activeScale : inactiveScale,
+          opacity: visible ? 1 : 0,
+          duration: animate && !reduceMotion ? 0.7 : 0,
+          ease: "elastic.out(1, 0.75)",
+        };
+
+        gsap.to(card, target);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("bg-ink", i === active);
+        dot.classList.toggle("w-5", i === active);
+        dot.classList.toggle("bg-ink/25", i !== active);
+      });
+    }
+
+    function setActive(i: number) {
+      active = wrapIndex(i, len);
+      render(true);
+    }
+
+    dots.forEach((dot, i) => dot.addEventListener("click", () => setActive(i)));
+    prevBtn.addEventListener("click", () => setActive(active - 1));
+    nextBtn.addEventListener("click", () => setActive(active + 1));
+    stage.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") setActive(active - 1);
+      if (e.key === "ArrowRight") setActive(active + 1);
+    });
+    stack.addEventListener("mouseenter", () => (hovering = true));
+    stack.addEventListener("mouseleave", () => (hovering = false));
+
+    render(false);
+
+    let resizeTimer: number;
+    window.addEventListener("resize", () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => render(false), 120);
+    });
+
+    if (!reduceMotion && len > 1) {
+      window.setInterval(() => {
+        if (!hovering) setActive(active + 1);
+      }, 4500);
+    }
+  });
+</script>
