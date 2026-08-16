@@ -109,7 +109,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
     --ring-radius: 580px;
     --ring-offset: 267px;
     --card-lift: 65px;
-    --card-w: 320px;
+    --card-w: 240px;
     --card-h: 333px;
   }
 
@@ -139,7 +139,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
     height: var(--card-h);
     margin: calc(var(--card-h) / -2) 0 0 calc(var(--card-w) / -2);
     --angle: calc(var(--i) * (360deg / var(--count)));
-    transform: translateY(calc(var(--card-lift) * -1)) rotate(var(--angle)) translateY(calc(var(--ring-radius) * -1));
+    transform: rotate(var(--angle)) translateY(calc(var(--ring-radius) * -1));
   }
 
   /* The card's own box (above) is the hit-box that guarantees no gap opens
@@ -197,7 +197,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
     left: 50%;
     top: calc(50% + var(--header-h, 96px) + var(--ring-offset));
     /* Card sits centered at radius --ring-radius, spanning ±(card-h/2)
-       along its own axis. Mask exactly 35% of --card-h — expressed as a
+       along its own axis. Mask 35% of --card-h — expressed as a
        fraction of --card-h (not a fixed px gap) so this stays correct as
        --card-h changes across breakpoints, not just on desktop. */
     width: calc((var(--ring-radius) - var(--card-h) * 0.35) * 2);
@@ -329,7 +329,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
       --ring-radius: 750px;
       --ring-offset: 271px;
       --card-lift: 55px;
-      --card-w: 280px;
+      --card-w: 230px;
       --card-h: 267px;
     }
     .hero__content {
@@ -342,7 +342,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
       --ring-radius: 357px;
       --ring-offset: 23px;
       --card-lift: 26px;
-      --card-w: 135px;
+      --card-w: 120px;
       --card-h: 127px;
     }
     .hero__content {

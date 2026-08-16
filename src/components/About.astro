@@ -95,7 +95,8 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
   @media (min-width: 1024px) {
     .about-photo-shell {
       align-self: end;
-      width: calc(100% + 260px);
+      max-width: none;
+      width: calc(100% + 260px + 15px);
       margin-left: -260px;
       margin-bottom: -120px;
     }
