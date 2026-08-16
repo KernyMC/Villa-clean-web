@@ -24,8 +24,7 @@ const areaImages = [
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
       {areas.map((area, index) => (
-        <a
-          href={area.href}
+        <div
           class:list={[
             "group relative isolate min-h-[280px] overflow-hidden rounded-[1.5rem] bg-forest",
             index === 0 && "md:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-[560px]",
@@ -41,8 +40,7 @@ const areaImages = [
             class="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
             loading="lazy"
           />
-          <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent"></div>
-          <div class="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+          <div class="hidden">
             <span class="mb-3 block text-xs font-semibold uppercase tracking-[0.18em] text-cream/65">
               0{index + 1} · Austin
             </span>
@@ -54,7 +52,7 @@ const areaImages = [
               <span aria-hidden="true" class="text-lg leading-none">↗</span>
             </span>
           </div>
-        </a>
+        </div>
       ))}
     </div>
   </div>
