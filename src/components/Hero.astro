@@ -72,7 +72,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
       visit, so it never becomes something you have to think about.
     </p>
     <div class="hero__cta-group">
-      <a href="#pricing" class="hero__cta hero__cta--primary">
+      <a href="#pricing" data-glare class="hero__cta hero__cta--primary">
         <span class="hero__cta-icon" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 22.76 22.76">
             <path d="M22.34,1A14.67,14.67,0,0,1,12,5.3,14.6,14.6,0,0,1,6.08,4.06,14.68,14.68,0,0,1,1.59,1" transform="translate(-0.29 -0.29)" fill="none" stroke="currentColor" stroke-width="2"></path>
@@ -81,8 +81,9 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
           </svg>
         </span>
         Get your free quote in 60 seconds
+        <span class="glare-sweep" aria-hidden="true"></span>
       </a>
-      <a href={contact.phoneHref} class="hero__cta hero__cta--secondary">
+      <a href={contact.phoneHref} data-magnetic class="hero__cta hero__cta--secondary">
         <span class="hero__cta-icon hero__cta-icon--secondary" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"></path>

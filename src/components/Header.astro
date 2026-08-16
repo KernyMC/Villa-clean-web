@@ -27,21 +27,32 @@ const navLinks = [
       ))}
     </nav>
     <div class="hidden md:flex items-center gap-5">
-      <a href={contact.phoneHref} class="text-cream text-sm no-underline hover:text-brass">{contact.phone}</a>
+      <a href={contact.phoneHref} data-magnetic class="header-phone text-cream text-sm no-underline hover:text-brass">
+        <span class="header-phone__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"></path>
+          </svg>
+        </span>
+        {contact.phone}
+      </a>
       <a
         href="#pricing"
+        data-glare
         class="bg-brass text-ink no-underline px-5.5 py-3 text-sm tracking-wide rounded-sm"
       >
         Get a Quote
+        <span class="glare-sweep" aria-hidden="true"></span>
       </a>
     </div>
 
     <div class="flex md:hidden items-center gap-3.5">
       <a
         href="#pricing"
+        data-glare
         class="bg-brass text-ink no-underline px-4.5 py-2.5 text-[13px] tracking-wide rounded-sm"
       >
         Get a Quote
+        <span class="glare-sweep" aria-hidden="true"></span>
       </a>
       <button
         type="button"
@@ -114,6 +125,20 @@ const navLinks = [
   if (header) new ResizeObserver(setHeaderHeightVar).observe(header);
   window.addEventListener("resize", setHeaderHeightVar, { passive: true });
 
+  document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((button) => {
+    button.addEventListener("pointermove", (event) => {
+      const rect = button.getBoundingClientRect();
+      const x = (event.clientX - rect.left - rect.width / 2) * 0.35;
+      const y = (event.clientY - rect.top - rect.height / 2) * 0.35;
+      button.style.setProperty("--magnetic-x", `${x}px`);
+      button.style.setProperty("--magnetic-y", `${y}px`);
+    });
+    button.addEventListener("pointerleave", () => {
+      button.style.setProperty("--magnetic-x", "0px");
+      button.style.setProperty("--magnetic-y", "0px");
+    });
+  });
+
   const mobileNav = document.getElementById("mobile-nav");
   const openBtn = document.getElementById("mobile-nav-toggle");
   const closeBtn = document.getElementById("mobile-nav-close");
@@ -134,3 +159,72 @@ const navLinks = [
   closeBtn?.addEventListener("click", closeNav);
   links.forEach((link) => link.addEventListener("click", closeNav));
 </script>
+
+<style is:global>
+  [data-magnetic] {
+    --magnetic-x: 0px;
+    --magnetic-y: 0px;
+    transform: translate3d(var(--magnetic-x), var(--magnetic-y), 0);
+    transition: transform 180ms ease, color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+    will-change: transform;
+  }
+
+  [data-magnetic]:active,
+  [data-glare]:active {
+    transform: scale(0.96) translate3d(var(--magnetic-x, 0px), var(--magnetic-y, 0px), 0);
+  }
+
+  .header-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-phone__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgba(244, 241, 234, 0.24);
+    border-radius: 50%;
+  }
+
+  [data-glare] {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 180ms ease, background-color 180ms ease;
+  }
+
+  [data-glare]:hover {
+    transform: scale(1.02);
+  }
+
+  .glare-sweep {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 50px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    transform: translateX(-150%) skewX(-20deg);
+  }
+
+  [data-glare]:hover .glare-sweep {
+    animation: glare-sweep 850ms ease-in-out infinite;
+    animation-delay: 150ms;
+  }
+
+  @keyframes glare-sweep {
+    from { transform: translateX(-150%) skewX(-20deg); }
+    to { transform: translateX(650%) skewX(-20deg); }
+  }
+
+  [data-glare] > *:not(.glare-sweep) {
+    position: relative;
+    z-index: 2;
+  }
+</style>

@@ -1,18 +1,61 @@
 ---
 import { areas } from "../data/site";
+
+const areaImages = [
+  "/assets/checklist/living-spaces.avif",
+  "/assets/checklist/kitchen.avif",
+  "/assets/checklist/bedroom.avif",
+];
 ---
 
 <section id="areas" data-reveal class="bg-section-tint">
- <div class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
-  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-10">
-    Service areas
-  </h2>
-  <div class="flex gap-10 flex-wrap">
-    {areas.map((a) => (
-      <a href={a.href} class="text-forest underline text-lg">
-        {a.name}
-      </a>
-    ))}
+  <div class="mx-auto max-w-7xl px-5 py-18 sm:px-8 sm:py-24 lg:px-20 lg:py-30">
+    <div class="mb-10 flex items-end justify-between gap-6 sm:mb-12">
+      <div>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brass">Where we work</p>
+        <h2 class="m-0 font-serif font-serif-opt text-[clamp(1.8rem,3.5vw,2.6rem)] font-medium tracking-[-0.01em]">
+          Service areas
+        </h2>
+      </div>
+      <p class="m-0 hidden max-w-xs text-right text-sm leading-relaxed text-forest/65 sm:block">
+        Thoughtful home care for Austin's most distinctive neighborhoods.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
+      {areas.map((area, index) => (
+        <a
+          href={area.href}
+          class:list={[
+            "group relative isolate min-h-[280px] overflow-hidden rounded-[1.5rem] bg-forest",
+            index === 0 && "md:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-[560px]",
+            index > 0 && "lg:min-h-[270px]",
+            index === 0 && "rounded-[2rem] rounded-br-[7rem]",
+            index === 1 && "rounded-[5rem] rounded-tr-[2rem]",
+            index === 2 && "rounded-[2rem] rounded-tl-[5rem]",
+          ]}
+        >
+          <img
+            src={areaImages[index]}
+            alt={`House cleaning in ${area.name}`}
+            class="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent"></div>
+          <div class="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+            <span class="mb-3 block text-xs font-semibold uppercase tracking-[0.18em] text-cream/65">
+              0{index + 1} · Austin
+            </span>
+            <h3 class="m-0 max-w-md font-serif font-serif-opt text-[clamp(1.5rem,3vw,2.4rem)] font-medium leading-tight text-cream">
+              {area.name}
+            </h3>
+            <span class="mt-5 inline-flex translate-y-2 items-center gap-2 text-sm font-medium text-cream opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+              Explore area
+              <span aria-hidden="true" class="text-lg leading-none">↗</span>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
   </div>
- </div>
 </section>
