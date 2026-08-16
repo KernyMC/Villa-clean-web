@@ -20,22 +20,24 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
         <span aria-hidden="true" class="font-mono text-xs text-ink tracking-wide">PHOTOGRAPH — founder portrait</span>
       )}
       <div aria-hidden="true" class="about-photo-fade"></div>
+      <div aria-hidden="true" class="about-photo-fade-bottom"></div>
     </div>
     <div>
       <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-8">
         About
       </h2>
       <p class="max-w-[36em] text-[17px] text-ink m-0 mb-5">
-        I started Villa Home Detail after years of managing households for families across West Austin.
-        I kept meeting the same problem: a good cleaner who disappeared after two visits, or a service
-        that treated every home the same. Neither respected what was actually being asked, which was
-        trust.
+        Silvana and Alejandro started Villa Home Detail after years of cleaning other people's homes
+        for companies that never seemed to notice the difference between one house and the next. They
+        kept meeting the same problem: a good team that disappeared after two visits, or a service that
+        treated every home the same. Neither respected what was actually being asked, which was trust.
       </p>
       <p class="max-w-[36em] text-[17px] text-ink m-0 mb-8">
-        We built something smaller and more deliberate. Every home keeps the same two-person team.
-        Every visit follows a protocol you set, not one we impose. That is the whole idea.
+        So they built something smaller and more deliberate: the same two-person team in every home,
+        every time, usually the two of them. Every visit follows a protocol you set, not one imposed on
+        you. That is the whole idea.
       </p>
-      <p class="font-serif font-serif-opt italic text-[1.1rem] m-0">— Founder, Villa Home Detail</p>
+      <p class="font-serif font-serif-opt italic text-[1.1rem] m-0">— Silvana &amp; Alejandro, Founders, Villa Home Detail</p>
     </div>
   </div>
 </section>
@@ -74,5 +76,33 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
       rgba(18, 17, 14, 0) 58%
     );
     pointer-events: none;
+  }
+
+  .about-photo-fade-bottom {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* Only does anything once the shell bleeds past the section's own
+       bottom/left edge below — hidden until then so it doesn't wash out
+       the tablet/mobile stacked layout. */
+    display: none;
+  }
+
+  /* Bleed the photo out to the section's own edges (bottom + left) and
+     grow it — the right edge stays put so it never encroaches on the
+     copy column. Only at the breakpoint where the two-column layout
+     actually exists. */
+  @media (min-width: 1024px) {
+    .about-photo-shell {
+      align-self: end;
+      width: calc(100% + 160px);
+      margin-left: -160px;
+      margin-bottom: -120px;
+    }
+
+    .about-photo-fade-bottom {
+      display: block;
+      background: linear-gradient(to top, var(--color-cream) 0%, var(--color-cream) 8%, transparent 45%);
+    }
   }
 </style>
