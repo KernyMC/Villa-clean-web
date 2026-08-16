@@ -26,7 +26,15 @@ Hosted on the user's own VPS via [Dokploy](https://dokploy.villahomedetail.com),
 
 The `dokploy` CLI is authenticated locally via `.env`'s `DOKPLOY_URL`/`DOKPLOY_TOKEN` for use across future sessions — **re-authenticate with `dokploy auth -u "$DOKPLOY_URL" -t "$DOKPLOY_TOKEN"`, never write the token itself into this file or any other git-tracked file.** The GitHub App connection (`Villa-Home-Detail`, installed on `KernyMC/Villa-clean-web`) is already set up in Dokploy — `dokploy git-provider get-all` to see it.
 
-To redeploy: push to `main`, then `dokploy application deploy --applicationId <id>` (or it may auto-deploy on push depending on the trigger type configured). `dokploy application one --applicationId <id>` to check status/logs.
+Live project/app IDs (not secret, safe to keep here):
+- Project: `Villa Home Detail` — `eBjfnw_bzd58maXW3JyoZ`
+- Environment: `production` — `fEunPzdBGds_E1hMn_mXU`
+- Application: `villa-web` — `Z5D8hOby8uflzySrR2nDA`
+- Domain: `villahomedetail.com`, port `4321`, Let's Encrypt SSL — `domainId LTXUaN-DcvQx-D1TKWdOR`
+
+To redeploy: push to `main` (auto-deploys, `triggerType: push`), or trigger manually with `dokploy application deploy --applicationId Z5D8hOby8uflzySrR2nDA`.
+
+**The `dokploy` CLI has a Windows/Git-Bash bug**: any argument that looks like a path starting with `/` (e.g. `--buildPath "/"`) gets silently mangled by Git Bash's MSYS path conversion into a Windows path (e.g. `C:/Program Files/Git/`) before it ever reaches the API — this broke the build twice while setting this up (`buildPath` and `createEnvFile` both hit it). **Prefer calling the Dokploy tRPC API directly with `curl` over using the CLI for mutations that take path-like arguments** — it's the same API the CLI wraps (`POST https://dokploy.villahomedetail.com/api/trpc/<procedure>` with `x-api-key: $DOKPLOY_TOKEN` and a `{"json": {...}}` body; GET+`?batch=1&input=...` for reads like `deployment.all` / `deployment.readLogs` to pull build logs when something fails).
 
 ### Going live checklist
 
