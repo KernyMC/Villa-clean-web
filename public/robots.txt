@@ -1,0 +1,5 @@
+# Site not ready for indexing yet — blocking everything (search engines and
+# AI crawlers alike) until content is finalized. See CLAUDE.md's "Going live"
+# checklist for what to change here once ready.
+User-agent: *
+Disallow: /

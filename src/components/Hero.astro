@@ -21,7 +21,7 @@ const photos =
     ? siteImages.heroSlides.map((slide) => ({
         label: slide.image?.alt || slide.label,
         imageUrl: slide.image?.asset
-          ? urlFor(slide.image).width(380).height(507).fit("crop").auto("format").url()
+          ? urlFor(slide.image).width(340).height(360).fit("crop").auto("format").url()
           : undefined,
       }))
     : fallbackPhotos;
@@ -45,18 +45,20 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
   <div class="hero__ring" aria-hidden="true">
     {ring.map((card) => (
       <figure class="hero__card" style={`--i:${card.i}`}>
-        {card.imageUrl ? (
-          <img
-            src={card.imageUrl}
-            alt=""
-            width="190"
-            height="253"
-            loading={card.priority ? "eager" : "lazy"}
-            fetchpriority={card.priority ? "high" : "auto"}
-          />
-        ) : (
-          <span class="hero__card-fallback">{card.label}</span>
-        )}
+        <div class="hero__card-inner">
+          {card.imageUrl ? (
+            <img
+              src={card.imageUrl}
+              alt=""
+              width="170"
+              height="180"
+              loading={card.priority ? "eager" : "lazy"}
+              fetchpriority={card.priority ? "high" : "auto"}
+            />
+          ) : (
+            <span class="hero__card-fallback">{card.label}</span>
+          )}
+        </div>
       </figure>
     ))}
   </div>
@@ -67,7 +69,7 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
     <h1 class="hero__title">Premium House Cleaning for Austin's Westside Homes</h1>
     <p class="hero__lede">
       A discreet, background-checked team maintains your home to the same exacting standard, every
-      visit — so it never becomes something you have to think about.
+      visit, so it never becomes something you have to think about.
     </p>
     <div class="hero__cta-group">
       <a href="#pricing" class="hero__cta hero__cta--primary">
@@ -138,13 +140,23 @@ const ring = Array.from({ length: RING_COUNT }, (_, i) => {
     margin: calc(var(--card-h) / -2) 0 0 calc(var(--card-w) / -2);
     --angle: calc(var(--i) * (360deg / var(--count)));
     transform: translateY(calc(var(--card-lift) * -1)) rotate(var(--angle)) translateY(calc(var(--ring-radius) * -1));
-    border-radius: 22px;
+  }
+
+  /* The card's own box (above) is the hit-box that guarantees no gap opens
+     between neighbors at any rotation angle — sized deliberately larger
+     than it needs to look. The visible photo sits in this inset inner div
+     instead, so there's breathing room between cards without shrinking
+     the hit-box that keeps the ring gapless mid-spin. */
+  .hero__card-inner {
+    position: absolute;
+    inset: 4px;
+    border-radius: 18px;
     overflow: hidden;
     border: 1px solid rgba(244, 241, 234, 0.14);
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
   }
 
-  .hero__card img {
+  .hero__card-inner img {
     display: block;
     width: 100%;
     height: 100%;

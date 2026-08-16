@@ -14,6 +14,28 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 
 Package manager is **pnpm** (`pnpm install`, `pnpm build`). After any change to a component, run `pnpm build` to catch type/markup errors before showing the result — this project has no test suite, the build is the smoke test.
 
+## Contact form (SMTP)
+
+`src/pages/api/contact.ts` is the site's one server-rendered route (`export const prerender = false`) — everything else stays fully static. It sends the FAQ contact form (`FAQ.astro`) via `nodemailer` using `SMTP_HOST`/`SMTP_PORT`/`SMTP_SECURE`/`SMTP_USER`/`SMTP_PASS`/`CONTACT_TO_EMAIL` env vars — see `.env.example` for the full list with comments. This requires the `@astrojs/node` adapter (already configured in `astro.config.mjs`, standalone mode) — don't remove it even though the rest of the site is static.
+
+Locally: copy `.env.example` to `.env` and fill in real values. In production (Dokploy): set these directly in the application's environment variables in the Dokploy dashboard — never commit real SMTP credentials anywhere.
+
+## Deployment (Dokploy)
+
+Hosted on the user's own VPS via [Dokploy](https://dokploy.villahomedetail.com), built from the root `Dockerfile` (multi-stage, `node:22-alpine`, mirrors the `@astrojs/node` standalone adapter — `node ./dist/server/entry.mjs`, listens on `PORT` (default `4321`)). `.dockerignore` excludes `studio/` (separate Sanity Studio app, not part of this deploy) and all local-only files.
+
+The `dokploy` CLI is authenticated locally via `.env`'s `DOKPLOY_URL`/`DOKPLOY_TOKEN` for use across future sessions — **re-authenticate with `dokploy auth -u "$DOKPLOY_URL" -t "$DOKPLOY_TOKEN"`, never write the token itself into this file or any other git-tracked file.** The GitHub App connection (`Villa-Home-Detail`, installed on `KernyMC/Villa-clean-web`) is already set up in Dokploy — `dokploy git-provider get-all` to see it.
+
+To redeploy: push to `main`, then `dokploy application deploy --applicationId <id>` (or it may auto-deploy on push depending on the trigger type configured). `dokploy application one --applicationId <id>` to check status/logs.
+
+### Going live checklist
+
+The site currently blocks all indexing while content is being finalized. To go live in search:
+
+1. `src/layouts/Layout.astro`: flip `const INDEXING_ENABLED = false` to `true`.
+2. `public/robots.txt`: replace `Disallow: /` with a normal allow-all (or a real sitemap-referencing robots.txt).
+3. Redeploy.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build
@@ -73,13 +95,15 @@ Only `Header`, `Hero`, and `Footer` are dark (`bg-ink`, `text-cream`, `brass` ac
 
 Studio lives in `studio/` (separate project, own `package.json`/`pnpm-lock.yaml`, run `pnpm dev` inside it to open the Studio locally, or use the hosted one at **https://villa-home-detail.sanity.studio/**). Project ID `c6i8g8qm`, dataset `production` (public, no token needed for reads).
 
-**Scope is deliberately narrow: only photography is in Sanity.** All text/pricing/copy is in `site.ts`. The schema is one singleton document, `siteImages` (edited via the Studio's "Site Images" entry, `sanity.config.ts` → `structure.ts` pins it so editors can't accidentally create a second one):
+**Scope is deliberately narrow: only photography is in Sanity.** All text/pricing/copy is in `site.ts`. There are three singleton documents, each pinned in the Studio sidebar (`sanity.config.ts` → `structure.ts`) so editors can't accidentally create a second one of any of them:
 
-- `heroSlides[]` — `{ label, image }`, feeds the rotating ring in `Hero.astro`
-- `aboutImage` — founder portrait in `About.astro`
-- `beforeAfterPairs[]` — `{ label, beforeImage, afterImage }`, feeds `BeforeAfter.astro`
+- **Hero Carousel** (`heroCarousel`, id `heroCarousel`) — `slides[]`: `{ label, image }`, feeds the rotating ring in `Hero.astro`
+- **Before & After Carousel** (`beforeAfterCarousel`, id `beforeAfterCarousel`) — `pairs[]`: `{ label, beforeImage, afterImage }`, feeds `BeforeAfter.astro`. Capped at 8 pairs (recommended 3–6).
+- **Site Images** (`siteImages`, id `siteImages`) — `aboutImage`, founder portrait in `About.astro`
 
-`src/lib/sanity.ts` exports `getSiteImages()` (one GROQ fetch, swallows errors → `null`) and `urlFor()` (image CDN URL builder). **Every component that consumes Sanity images follows the same fallback pattern** — copy it exactly when adding a new image field:
+They're split into separate documents (rather than one combined singleton) purely so each is its own easy-to-find entry in the Studio's document list — a non-technical editor opening the Studio shouldn't have to know which array inside one big document holds which section's photos.
+
+`src/lib/sanity.ts` exports `getSiteImages()` and `urlFor()` (image CDN URL builder). `getSiteImages()` runs one GROQ query that fetches all three documents and re-flattens them into a single `{ heroSlides, aboutImage, beforeAfterPairs }` object (swallows errors → `null`) — so components don't need to know the data is split across documents. **Every component that consumes Sanity images follows the same fallback pattern** — copy it exactly when adding a new image field:
 
 ```ts
 const siteImages = await getSiteImages();
@@ -88,7 +112,7 @@ const thing = siteImages?.someField?.asset
   : undefined; // falls through to the static placeholder/asset in the markup
 ```
 
-If you add a new image field: (1) add it to the `siteImages` schema in `studio/schemaTypes/documents/siteImages.ts`, using `imageWithAlt()` from `studio/schemaTypes/objects/imageWithAlt.ts` for consistency (hotspot + required alt), (2) run `cd studio && npx sanity schemas deploy` (and `npx sanity deploy` if you want the hosted Studio to pick it up), (3) add the field to `SITE_IMAGES_QUERY` in `src/lib/sanity.ts`, (4) consume it in the component with the fallback pattern above. Never make an image field required at the schema level — the site must render fine with zero Sanity content.
+If you add a new image field to one of the three documents: (1) add it to the relevant schema file in `studio/schemaTypes/documents/`, using `imageWithAlt()` from `studio/schemaTypes/objects/imageWithAlt.ts` for consistency (hotspot + required alt), (2) run `cd studio && npx sanity schema deploy` (and `npx sanity deploy` if you want the hosted Studio to pick it up), (3) update `SITE_IMAGES_QUERY` in `src/lib/sanity.ts`, (4) consume it in the component with the fallback pattern above. If you're adding a genuinely new *section* (not a field on an existing one), give it its own singleton document + `structure.ts` entry rather than growing one of the three above. Never make an image field required at the schema level — the site must render fine with zero Sanity content.
 
 The `sanity-plugin-media` plugin is installed in the Studio for drag-and-drop asset browsing — no action needed from the frontend side.
 

@@ -1,17 +1,49 @@
 ---
 import { services } from "../data/site";
+
+const deepClean = services.find((s) => s.title === "Deep Clean")!;
+const [topA, topB, wide] = services.filter((s) => s.title !== "Deep Clean");
 ---
 
-<section id="services" data-reveal class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
-  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-14">
+<section id="services" data-reveal class="px-5 sm:px-8 lg:px-20 pt-6 sm:pt-8 lg:pt-10 pb-18 sm:pb-24 lg:pb-30 max-w-[100rem] mx-auto">
+  <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-10">
     Services
   </h2>
-  <div class="grid gap-12" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-    {services.map((s) => (
-      <div class="border-t border-brass pt-6">
-        <h3 class="font-serif font-serif-opt font-medium text-[1.3rem] m-0 mb-3.5">{s.title}</h3>
-        <p class="m-0 text-ink text-base">{s.body}</p>
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:h-[clamp(420px,42vw,600px)]">
+    <div class="relative overflow-hidden rounded-sm aspect-[3/4] lg:aspect-auto lg:h-full">
+      <img
+        src={deepClean.image}
+        alt={deepClean.title}
+        class="absolute inset-0 h-full w-full object-cover"
+        loading="lazy"
+      />
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent"></div>
+      <div class="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+        <h3 class="font-serif font-serif-opt font-medium text-[1.4rem] text-cream m-0 mb-2">{deepClean.title}</h3>
+        <p class="m-0 text-cream/80 text-sm leading-relaxed max-w-[34ch]">{deepClean.body}</p>
       </div>
-    ))}
+    </div>
+
+    <div class="grid gap-4 lg:grid-rows-2 lg:h-full">
+      <div class="grid grid-cols-2 gap-4">
+        {[topA, topB].map((s) => (
+          <div class="relative overflow-hidden rounded-sm aspect-square lg:aspect-auto lg:h-full">
+            <img src={s.image} alt={s.title} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 p-3.5 sm:p-4">
+              <h3 class="font-serif font-serif-opt font-medium text-[1.05rem] text-cream m-0">{s.title}</h3>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="relative overflow-hidden rounded-sm aspect-[21/9] lg:aspect-auto lg:h-full">
+        <img src={wide.image} alt={wide.title} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+          <h3 class="font-serif font-serif-opt font-medium text-[1.15rem] text-cream m-0 mb-1">{wide.title}</h3>
+          <p class="hidden sm:block m-0 text-cream/80 text-sm leading-relaxed max-w-[46ch]">{wide.body}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

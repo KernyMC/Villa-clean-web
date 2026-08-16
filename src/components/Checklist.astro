@@ -3,24 +3,44 @@ import { checklist } from "../data/site";
 ---
 
 <section data-reveal class="bg-section-tint">
- <div class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
+ <div class="px-5 sm:px-8 lg:px-12 py-18 sm:py-24 lg:py-30 max-w-[100rem] mx-auto">
   <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-14">
     What's included
   </h2>
-  <div class="grid gap-12 gap-x-16" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+  <div class="grid gap-10 sm:grid-cols-2 lg:flex lg:gap-0 lg:rounded-sm lg:overflow-hidden lg:h-[clamp(520px,64vh,760px)]">
     {checklist.map((room) => (
-      <div>
-        <h3 class="font-serif font-serif-opt font-medium text-[1.15rem] border-b border-line pb-3.5 m-0 mb-4.5">
-          {room.title}
-        </h3>
-        <ul class="m-0 p-0 list-none flex flex-col gap-3">
-          {room.items.map((line) => (
-            <li class="text-sm text-ink pl-4.5 relative">
-              <span class="absolute left-0 top-2 w-1.5 h-1.5 bg-brass inline-block"></span>
-              {line}
-            </li>
-          ))}
-        </ul>
+      <div
+        class="group relative lg:flex-1 lg:min-w-0 lg:h-full lg:transition-[flex] lg:duration-500 lg:ease-out lg:hover:flex-[3] lg:focus-within:flex-[3]"
+        tabindex="0"
+      >
+        <div class="relative overflow-hidden rounded-sm aspect-[16/10] lg:absolute lg:inset-0 lg:aspect-auto lg:rounded-none">
+          <img
+            src={room.image}
+            alt={room.title}
+            class="absolute inset-0 h-full w-full object-cover lg:grayscale lg:transition-all lg:duration-500 lg:group-hover:grayscale-0 lg:group-hover:scale-110 lg:group-focus-within:grayscale-0 lg:group-focus-within:scale-110"
+            loading="lazy"
+          />
+        </div>
+        <div class="hidden lg:block pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/92 via-ink/40 to-transparent"></div>
+
+        <div class="mt-5 lg:mt-0 lg:absolute lg:inset-x-0 lg:bottom-0 lg:p-5">
+          <h3 class="font-serif font-serif-opt font-medium text-[1.15rem] border-b border-line pb-3.5 m-0 mb-4.5 lg:text-cream lg:border-cream/25 lg:pb-2.5 lg:mb-2.5">
+            {room.title}
+          </h3>
+
+          <p class="hidden lg:block text-cream/65 text-[11px] tracking-[0.06em] uppercase m-0 mb-1 transition-opacity duration-200 group-hover:opacity-0 group-focus-within:opacity-0">
+            {room.items.length} tasks — hover to view
+          </p>
+
+          <ul class="m-0 p-0 list-none flex flex-col gap-3 lg:gap-1.5 lg:max-h-0 lg:opacity-0 lg:overflow-hidden lg:transition-all lg:duration-300 lg:group-hover:max-h-[280px] lg:group-hover:opacity-100 lg:group-focus-within:max-h-[280px] lg:group-focus-within:opacity-100">
+            {room.items.map((line) => (
+              <li class="text-sm text-ink pl-4.5 relative lg:text-cream/90">
+                <span class="absolute left-0 top-2 w-1.5 h-1.5 bg-brass inline-block"></span>
+                {line}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     ))}
   </div>

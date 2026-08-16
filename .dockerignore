@@ -1,0 +1,14 @@
+node_modules
+dist
+.astro
+.git
+.env
+.env.*
+!.env.example
+studio
+.claude
+.vscode
+*.md
+.gitignore
+.dockerignore
+Dockerfile

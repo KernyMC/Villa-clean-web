@@ -11,14 +11,15 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
 <section id="about" data-reveal class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
   <div class="grid gap-16 items-center" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
     <div
-      class="w-full aspect-[4/5] border border-line flex items-center justify-center p-6 text-center overflow-hidden"
+      class="about-photo-shell"
       style={aboutImageUrl ? undefined : "background: repeating-linear-gradient(135deg, #E8E3D8 0px, #E8E3D8 14px, #F4F1EA 14px, #F4F1EA 28px);"}
     >
       {aboutImageUrl ? (
-        <img src={aboutImageUrl} alt={aboutImageAlt} class="w-full h-full object-cover" loading="lazy" />
+        <img src={aboutImageUrl} alt={aboutImageAlt} class="about-photo" loading="lazy" />
       ) : (
         <span aria-hidden="true" class="font-mono text-xs text-ink tracking-wide">PHOTOGRAPH — founder portrait</span>
       )}
+      <div aria-hidden="true" class="about-photo-fade"></div>
     </div>
     <div>
       <h2 class="font-serif font-serif-opt font-medium text-[clamp(1.8rem,3.5vw,2.6rem)] tracking-[-0.01em] m-0 mb-8">
@@ -38,3 +39,40 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
     </div>
   </div>
 </section>
+
+<style>
+  .about-photo-shell {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1539 / 1359;
+    overflow: hidden;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .about-photo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center center;
+    transform: none;
+    filter: saturate(0.96);
+  }
+
+  .about-photo-fade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(18, 17, 14, 0.08) 0%,
+      rgba(18, 17, 14, 0.02) 28%,
+      rgba(18, 17, 14, 0) 58%
+    );
+    pointer-events: none;
+  }
+</style>

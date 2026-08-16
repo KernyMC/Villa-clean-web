@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { contact } from "../data/site";
+import { getSiteImages, urlFor } from "../lib/sanity";
 
 interface Props {
   title?: string;
@@ -12,11 +13,25 @@ const {
   description = "Discreet, background-checked residential cleaning for West Lake Hills, Tarrytown, and Barton Creek. Same team every visit, instant online quote.",
 } = Astro.props;
 
+// Indexing kill switch — flip to true (and delete the two <meta name="robots">
+// lines below along with public/robots.txt's "Disallow: /") when the site is
+// ready to go live in search. See CLAUDE.md's "Going live" checklist.
+const INDEXING_ENABLED = false;
+
+const siteUrl = "https://villahomedetail.com";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+const siteImages = await getSiteImages();
+const ogImage = siteImages?.aboutImage?.asset
+  ? urlFor(siteImages.aboutImage).width(1200).height(630).fit("crop").auto("format").url()
+  : undefined;
+
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   name: "Villa Home Detail",
-  image: "",
+  url: siteUrl,
+  image: ogImage || "",
   telephone: contact.phone,
   address: {
     "@type": "PostalAddress",
@@ -82,6 +97,23 @@ const faqSchema = {
     },
   ],
 };
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Villa Home Detail",
+  url: siteUrl,
+  logo: `${siteUrl}/favicon.svg`,
+  telephone: contact.phone,
+  areaServed: ["West Lake Hills, TX", "Tarrytown, Austin, TX", "Barton Creek, Austin, TX"],
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Villa Home Detail",
+  url: siteUrl,
+};
 ---
 
 <!doctype html>
@@ -91,6 +123,13 @@ const faqSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {!INDEXING_ENABLED && (
+      <>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+      </>
+    )}
     <link
       rel="icon"
       type="image/svg+xml"
@@ -98,10 +137,26 @@ const faqSchema = {
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.sanity.io" />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..600,0..100&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Villa Home Detail" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="theme-color" content="#1C2620" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </head>

@@ -44,10 +44,19 @@ export interface SiteImages {
   beforeAfterPairs?: BeforeAfterPairImages[];
 }
 
-const SITE_IMAGES_QUERY = `*[_type == "siteImages"][0]{
-  heroSlides[]{ label, image },
-  aboutImage,
-  beforeAfterPairs[]{ label, beforeImage, afterImage }
+// Hero slides, the before/after pairs, and the about photo each live in
+// their own document now (heroCarousel, beforeAfterCarousel, siteImages) so
+// editors get a dedicated, easy-to-find entry per section in the Studio —
+// this query just re-flattens them into the same shape the rest of the
+// codebase already expects.
+// Each singleton is looked up by its exact _id, not just _type — a stray
+// second document of the same _type (e.g. a leftover draft, or one an
+// editor accidentally created before the Studio's structure.ts pinning
+// kicked in) would otherwise make "[0]" pick a document at random.
+const SITE_IMAGES_QUERY = `{
+  "heroSlides": *[_type == "heroCarousel" && _id == "heroCarousel"][0].slides[]{ label, image },
+  "aboutImage": *[_type == "siteImages" && _id == "siteImages"][0].aboutImage,
+  "beforeAfterPairs": *[_type == "beforeAfterCarousel" && _id == "beforeAfterCarousel"][0].pairs[]{ label, beforeImage, afterImage }
 }`;
 
 export async function getSiteImages(): Promise<SiteImages | null> {

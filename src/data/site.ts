@@ -13,18 +13,22 @@ export const services = [
   {
     title: "Recurring Care",
     body: "Weekly, bi-weekly, or monthly visits from the same two-person team. We learn your home's rhythms and maintain it quietly in the background of your life.",
+    image: "/assets/services/recurring-care.avif",
   },
   {
     title: "Deep Clean",
     body: "A comprehensive reset for every room: baseboards, interior glass, grout, and appliance interiors. The standard every recurring visit is measured against.",
+    image: "/assets/services/deep-clean.avif",
   },
   {
     title: "Move-In / Move-Out",
     body: "An empty home, cleaned to a standard fit for the next chapter. Cabinets, closets, and every surface a new owner or tenant notices first.",
+    image: "/assets/services/movein-moveout.avif",
   },
   {
     title: "Post-Construction",
     body: "Fine dust removal after a renovation or build. Window tracks, light fixtures, and HVAC vents, addressed before furniture returns.",
+    image: "/assets/services/post-construction.avif",
   },
 ];
 
@@ -49,6 +53,7 @@ export const steps = [
 export const checklist = [
   {
     title: "Kitchen",
+    image: "/assets/checklist/kitchen.avif",
     items: [
       "Countertops and backsplash wiped and disinfected",
       "Sink and fixtures polished",
@@ -61,6 +66,7 @@ export const checklist = [
   },
   {
     title: "Bathrooms",
+    image: "/assets/checklist/bathrooms.avif",
     items: [
       "Tub, shower, and glass cleaned",
       "Toilets cleaned and disinfected",
@@ -72,6 +78,7 @@ export const checklist = [
   },
   {
     title: "Bedrooms",
+    image: "/assets/checklist/bedroom.avif",
     items: [
       "Dusting of all surfaces and décor",
       "Beds made, linens straightened",
@@ -82,6 +89,7 @@ export const checklist = [
   },
   {
     title: "Living Spaces",
+    image: "/assets/checklist/living-spaces.avif",
     items: [
       "Furniture dusted, surfaces cleared",
       "Upholstery vacuumed",
