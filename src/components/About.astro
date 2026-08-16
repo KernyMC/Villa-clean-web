@@ -3,7 +3,7 @@ import { getSiteImages, urlFor } from "../lib/sanity";
 
 const siteImages = await getSiteImages();
 const aboutImageUrl = siteImages?.aboutImage?.asset
-  ? urlFor(siteImages.aboutImage).width(800).height(1000).fit("crop").auto("format").url()
+  ? urlFor(siteImages.aboutImage).width(900).auto("format").url()
   : undefined;
 const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
 ---
@@ -11,7 +11,7 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
 <section id="about" data-reveal class="px-5 sm:px-8 lg:px-20 py-18 sm:py-24 lg:py-30 max-w-7xl mx-auto">
   <div class="grid gap-16 items-center" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
     <div
-      class="about-photo-shell"
+      class:list={["about-photo-shell", { "about-photo-shell--empty": !aboutImageUrl }]}
       style={aboutImageUrl ? undefined : "background: repeating-linear-gradient(135deg, #E8E3D8 0px, #E8E3D8 14px, #F4F1EA 14px, #F4F1EA 28px);"}
     >
       {aboutImageUrl ? (
@@ -45,22 +45,22 @@ const aboutImageAlt = siteImages?.aboutImage?.alt || "Founder portrait";
     position: relative;
     width: 100%;
     max-width: 100%;
-    aspect-ratio: 1539 / 1359;
     overflow: hidden;
     border: none;
     background: transparent;
     display: flex;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
+  }
+
+  .about-photo-shell--empty {
+    aspect-ratio: 4 / 5;
   }
 
   .about-photo {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: block;
-    object-fit: cover;
-    object-position: center center;
-    transform: none;
     filter: saturate(0.96);
   }
 
