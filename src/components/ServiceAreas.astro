@@ -2,9 +2,9 @@
 import { areas } from "../data/site";
 
 const areaImages = [
-  "/assets/checklist/living-spaces.avif",
-  "/assets/checklist/kitchen.avif",
-  "/assets/checklist/bedroom.avif",
+  "https://cdn.sanity.io/images/c6i8g8qm/production/8635cccf5b693d05bf89c1fb3403582007d19f36-1350x753.avif",
+  "https://cdn.sanity.io/images/c6i8g8qm/production/974c7b7f0630ddce7891c37be9d843dab328ba2d-1350x753.avif",
+  "https://cdn.sanity.io/images/c6i8g8qm/production/b6376f141a8840c50157f30f556daf000253577f-1350x753.avif",
 ];
 ---
 
@@ -55,5 +55,61 @@ const areaImages = [
         </div>
       ))}
     </div>
+    <a href="#faq" data-text-reveal class="mt-6 inline-flex items-center justify-center gap-2.5 rounded-full border border-forest/20 bg-forest/[0.04] px-6 py-3 text-sm font-medium text-forest transition-colors duration-200 hover:bg-forest/[0.08]">
+      <span class="text-reveal-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+      </span>
+      <span class="text-reveal-label"><span>And more areas of Texas</span><span>Get your free quote</span></span>
+    </a>
   </div>
 </section>
+
+<style>
+  [data-text-reveal] {
+    transform: scale(1);
+    transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+  }
+
+  [data-text-reveal]:hover {
+    transform: scale(1.02);
+  }
+
+  [data-text-reveal]:active {
+    transform: scale(0.96);
+  }
+
+  .text-reveal-icon {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .text-reveal-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  [data-text-reveal]:hover .text-reveal-icon {
+    transform: rotate(45deg);
+  }
+
+  .text-reveal-label {
+    display: flex;
+    height: 18px;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  .text-reveal-label > span {
+    display: block;
+    height: 18px;
+    line-height: 18px;
+    white-space: nowrap;
+    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-text-reveal]:hover .text-reveal-label > span {
+    transform: translateY(-18px);
+  }
+</style>

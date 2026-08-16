@@ -163,6 +163,125 @@ const websiteSchema = {
   <body>
     <slot />
     <script>
+      const translations: Record<string, string> = {
+        "Pricing": "Precios",
+        "Areas": "Áreas",
+        "About": "Nosotros",
+        "Get a Quote": "Obtener cotización",
+        "Premium House Cleaning for Austin's Westside Homes": "Limpieza premium para los hogares del oeste de Austin",
+        "A discreet, background-checked team maintains your home to the same exacting standard, every visit, so it never becomes something you have to think about.": "Un equipo discreto y verificado mantiene tu hogar con el mismo estándar impecable en cada visita, para que nunca tengas que preocuparte por ello.",
+        "Get your free quote in 60 seconds": "Obtén tu cotización gratis en 60 segundos",
+        "Background-checked": "Personal verificado",
+        "Same team every visit": "El mismo equipo en cada visita",
+        "Satisfaction guaranteed": "Satisfacción garantizada",
+        "Services": "Servicios",
+        "Recurring Care": "Cuidado recurrente",
+        "Deep Clean": "Limpieza profunda",
+        "Move-In / Move-Out": "Mudanza de entrada / salida",
+        "Post-Construction": "Después de construcción",
+        "How it works": "Cómo funciona",
+        "Tell us about your home": "Cuéntanos sobre tu hogar",
+        "We schedule a walkthrough": "Agendamos una visita",
+        "Your team takes it from there": "Tu equipo se encarga del resto",
+        "What's included": "Qué incluye",
+        "Before and after": "Antes y después",
+        "Estimate your quote": "Calcula tu cotización",
+        "Adjust the details below for an instant estimate. Every home is confirmed with an in-person walkthrough.": "Ajusta los detalles para obtener un estimado instantáneo. Cada hogar se confirma con una visita presencial.",
+        "Square footage": "Metros cuadrados",
+        "Bedrooms": "Habitaciones",
+        "Bathrooms": "Baños",
+        "Frequency": "Frecuencia",
+        "Weekly": "Semanal",
+        "Bi-weekly": "Cada dos semanas",
+        "Monthly": "Mensual",
+        "One-time": "Una sola vez",
+        "Estimated visit price": "Precio estimado por visita",
+        "Your first visit is a deep clean, quoted separately.": "La primera visita es una limpieza profunda y se cotiza por separado.",
+        "Need another quote? Ask us directly": "¿Necesitas otra cotización? Escríbenos directamente",
+        "Lock this quote": "Guardar esta cotización",
+        "Quote saved. We will call within one business day to confirm your walkthrough.": "Cotización guardada. Te llamaremos en un día hábil para confirmar tu visita.",
+        "Where we work": "Dónde trabajamos",
+        "Service areas": "Áreas de servicio",
+        "Thoughtful home care for Austin's most distinctive neighborhoods.": "Cuidado detallado para los vecindarios más exclusivos de Austin.",
+        "And more areas of Texas": "Y más áreas de Texas",
+        "Still have a question?": "¿Todavía tienes preguntas?",
+        "Frequently asked": "Preguntas frecuentes",
+        "Send us a note and we will get back to you within one business day.": "Envíanos un mensaje y te responderemos en un día hábil.",
+        "Name": "Nombre",
+        "Email": "Correo electrónico",
+        "Message": "Mensaje",
+        "Your name": "Tu nombre",
+        "How can we help?": "¿Cómo podemos ayudarte?",
+        "Send message": "Enviar mensaje",
+        "What clients say": "Lo que dicen nuestros clientes",
+        "Follow us": "Síguenos",
+        "Immaculate homes, handled quietly.": "Hogares impecables, atendidos con discreción.",
+        "Villa Home Detail": "Villa Home Detail",
+        "Get your free quote": "Obtén tu cotización gratis",
+        "Austin, Texas": "Austin, Texas",
+        "Monday–Saturday": "Lunes–sábado",
+        "8:00am – 6:00pm": "8:00 a. m. – 6:00 p. m.",
+        "Kitchen": "Cocina",
+        "Living Spaces": "Áreas de estar",
+      };
+
+      const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim();
+      const originalText = new WeakMap<Text, string>();
+      const originalAttributes = new WeakMap<HTMLElement, Record<string, string>>();
+      const translatableAttributes = ["placeholder", "aria-label", "alt"];
+
+      const translatePage = (language: "en" | "es") => {
+        document.documentElement.lang = language;
+        document.querySelectorAll<HTMLElement>("[data-language-toggle]").forEach((button) => {
+          button.textContent = language === "en" ? "ES" : "EN";
+        });
+
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const textNodes: Text[] = [];
+        let node: Node | null;
+        while ((node = walker.nextNode())) {
+          if (node.parentElement && !["SCRIPT", "STYLE"].includes(node.parentElement.tagName)) textNodes.push(node as Text);
+        }
+        textNodes.forEach((textNode) => {
+          if (!originalText.has(textNode)) originalText.set(textNode, textNode.textContent || "");
+          const source = originalText.get(textNode) || "";
+          const key = normalizeText(source);
+          const replacement = language === "es" ? translations[key] : key;
+          if (!replacement) return;
+          const leading = source.match(/^\s*/)?.[0] || "";
+          const trailing = source.match(/\s*$/)?.[0] || "";
+          textNode.textContent = `${leading}${replacement}${trailing}`;
+        });
+
+        document.querySelectorAll<HTMLElement>("body *").forEach((element) => {
+          if (!originalAttributes.has(element)) {
+            const saved: Record<string, string> = {};
+            translatableAttributes.forEach((attribute) => {
+              const value = element.getAttribute(attribute);
+              if (value) saved[attribute] = value;
+            });
+            originalAttributes.set(element, saved);
+          }
+          const saved = originalAttributes.get(element) || {};
+          translatableAttributes.forEach((attribute) => {
+            const source = saved[attribute];
+            if (!source) return;
+            element.setAttribute(attribute, language === "es" ? translations[normalizeText(source)] || source : source);
+          });
+        });
+        localStorage.setItem("villa-language", language);
+      };
+
+      document.querySelectorAll<HTMLElement>("[data-language-toggle]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const nextLanguage = document.documentElement.lang === "es" ? "en" : "es";
+          translatePage(nextLanguage);
+        });
+      });
+
+      const savedLanguage = localStorage.getItem("villa-language");
+      if (savedLanguage === "es") translatePage("es");
+
       const revealEls = Array.from(document.querySelectorAll("[data-reveal]"));
       const observer = new IntersectionObserver(
         (entries) => {
