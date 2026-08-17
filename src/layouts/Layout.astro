@@ -16,7 +16,7 @@ const {
 // Indexing kill switch — flip to true (and delete the two <meta name="robots">
 // lines below along with public/robots.txt's "Disallow: /") when the site is
 // ready to go live in search. See CLAUDE.md's "Going live" checklist.
-const INDEXING_ENABLED = false;
+const INDEXING_ENABLED = true;
 
 const siteUrl = "https://villahomedetail.com";
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
@@ -26,6 +26,9 @@ const ogImage = siteImages?.aboutImage?.asset
   ? urlFor(siteImages.aboutImage).width(1200).height(630).fit("crop").auto("format").url()
   : undefined;
 
+// Service-area business with no public storefront — per Google's structured-data
+// guidance for SABs, omit a street `address` rather than publish a placeholder one.
+// `areaServed` carries the location signal instead.
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
@@ -33,15 +36,12 @@ const localBusinessSchema = {
   url: siteUrl,
   image: ogImage || "",
   telephone: contact.phone,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "ADDRESS_TBD",
-    addressLocality: "Austin",
-    addressRegion: "TX",
-    postalCode: "",
-    addressCountry: "US",
-  },
-  areaServed: ["West Lake Hills, TX", "Tarrytown, Austin, TX", "Barton Creek, Austin, TX"],
+  areaServed: [
+    { "@type": "City", name: "Austin", "@id": "https://en.wikipedia.org/wiki/Austin,_Texas" },
+    { "@type": "Place", name: "West Lake Hills, TX" },
+    { "@type": "Place", name: "Tarrytown, Austin, TX" },
+    { "@type": "Place", name: "Barton Creek, Austin, TX" },
+  ],
   openingHours: "Mo-Sa 08:00-18:00",
   priceRange: "$$$",
 };
@@ -207,12 +207,22 @@ const websiteSchema = {
         "Still have a question?": "¿Todavía tienes preguntas?",
         "Frequently asked": "Preguntas frecuentes",
         "Send us a note and we will get back to you within one business day.": "Envíanos un mensaje y te responderemos en un día hábil.",
+        "Contact": "Contacto",
         "Name": "Nombre",
         "Email": "Correo electrónico",
+        "Phone": "Teléfono",
         "Message": "Mensaje",
         "Your name": "Tu nombre",
         "How can we help?": "¿Cómo podemos ayudarte?",
         "Send message": "Enviar mensaje",
+        "Sending…": "Enviando…",
+        "Sent": "Enviado",
+        "Please enter your name.": "Por favor ingresa tu nombre.",
+        "Please enter your email.": "Por favor ingresa tu correo electrónico.",
+        "Please enter a valid email address.": "Por favor ingresa un correo electrónico válido.",
+        "Please enter your phone number.": "Por favor ingresa tu número de teléfono.",
+        "Please enter a valid 10-digit US phone number.": "Por favor ingresa un número de teléfono de EE. UU. válido de 10 dígitos.",
+        "Please tell us how we can help.": "Por favor cuéntanos cómo podemos ayudarte.",
         "What clients say": "Lo que dicen nuestros clientes",
         "Follow us": "Síguenos",
         "Immaculate homes, handled quietly.": "Hogares impecables, atendidos con discreción.",

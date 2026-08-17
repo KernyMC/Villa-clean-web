@@ -34,12 +34,12 @@ import { faqItems } from "../data/site";
         Send us a note and we will get back to you within one business day.
       </p>
 
-      <p id="contact-sent-message" class="hidden text-[15px] text-ink">
+      <p id="contact-sent-message" class="hidden text-[15px] text-forest font-medium">
         Thanks — we will get back to you within one business day.
       </p>
       <p id="contact-error-message" class="hidden text-[15px] text-red-700"></p>
 
-      <form id="contact-form" class="flex flex-col gap-4">
+      <form id="contact-form" novalidate class="flex flex-col gap-4">
         <div>
           <label for="contact-name" class="block text-sm text-ink mb-1.5">Name</label>
           <input
@@ -47,9 +47,11 @@ import { faqItems } from "../data/site";
             name="name"
             type="text"
             required
+            autocomplete="name"
             placeholder="Your name"
-            class="w-full border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm"
+            class="field-input w-full border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm"
           />
+          <p class="field-error hidden mt-1.5 text-[13px] text-red-700"></p>
         </div>
         <div>
           <label for="contact-email" class="block text-sm text-ink mb-1.5">Email</label>
@@ -58,9 +60,32 @@ import { faqItems } from "../data/site";
             name="email"
             type="email"
             required
+            autocomplete="email"
             placeholder="you@email.com"
-            class="w-full border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm"
+            class="field-input w-full border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm"
           />
+          <p class="field-error hidden mt-1.5 text-[13px] text-red-700"></p>
+        </div>
+        <div>
+          <label for="contact-phone" class="block text-sm text-ink mb-1.5">Phone</label>
+          <div class="phone-field field-input flex items-stretch border border-line bg-cream rounded-sm overflow-hidden">
+            <span class="flex items-center gap-1.5 pl-3.5 pr-3 text-[15px] text-ink border-r border-line select-none bg-black/[0.03]" aria-hidden="true">
+              <span class="text-base leading-none">🇺🇸</span>
+              <span>+1</span>
+            </span>
+            <input
+              id="contact-phone"
+              name="phone"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel-national"
+              required
+              placeholder="(512) 555-0123"
+              maxlength="14"
+              class="w-full bg-transparent text-ink px-3.5 py-3 text-[15px] border-none outline-none"
+            />
+          </div>
+          <p class="field-error hidden mt-1.5 text-[13px] text-red-700"></p>
         </div>
         <div>
           <label for="contact-message" class="block text-sm text-ink mb-1.5">Message</label>
@@ -70,24 +95,30 @@ import { faqItems } from "../data/site";
             required
             rows="4"
             placeholder="How can we help?"
-            class="w-full border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm resize-none"
+            class="field-input w-full border border-line bg-cream text-ink px-3.5 py-3 text-[15px] rounded-sm resize-none"
           ></textarea>
+          <p class="field-error hidden mt-1.5 text-[13px] text-red-700"></p>
         </div>
         <button
           type="submit"
-          data-morph
-          class="self-start bg-forest text-cream border-none px-5.5 py-3 text-sm tracking-wide rounded-sm cursor-pointer mt-1 inline-flex items-center justify-center gap-2.5"
+          data-submit-btn
+          data-state="idle"
+          class="submit-btn self-start bg-forest text-cream border-none px-5.5 py-3 text-sm tracking-wide rounded-sm cursor-pointer mt-1 inline-flex items-center justify-center gap-2.5 disabled:cursor-not-allowed disabled:opacity-80"
         >
-          <span class="morph-icon" aria-hidden="true">
-            <svg class="morph-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <span class="btn-icon" aria-hidden="true">
+            <svg class="icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="m22 2-7 20-4-9-9-4Z"></path>
               <path d="M22 2 11 13"></path>
             </svg>
-            <svg class="morph-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="icon-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="9" stroke-opacity="0.25"></circle>
+              <path d="M21 12a9 9 0 0 0-9-9"></path>
+            </svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="m5 12 4 4L19 6"></path>
             </svg>
           </span>
-          Send message
+          <span class="btn-label">Send message</span>
         </button>
       </form>
     </div>
@@ -112,17 +143,102 @@ import { faqItems } from "../data/site";
   const contactForm = document.getElementById("contact-form") as HTMLFormElement;
   const contactSentMessage = document.getElementById("contact-sent-message")!;
   const contactErrorMessage = document.getElementById("contact-error-message")!;
-  const contactSubmitBtn = contactForm.querySelector<HTMLButtonElement>("button[type=submit]")!;
+  const contactSubmitBtn = contactForm.querySelector<HTMLButtonElement>("[data-submit-btn]")!;
+  const btnLabel = contactSubmitBtn.querySelector<HTMLSpanElement>(".btn-label")!;
+  const nameInput = document.getElementById("contact-name") as HTMLInputElement;
+  const emailInput = document.getElementById("contact-email") as HTMLInputElement;
+  const phoneInput = document.getElementById("contact-phone") as HTMLInputElement;
+  const messageInput = document.getElementById("contact-message") as HTMLTextAreaElement;
 
-  contactSubmitBtn.addEventListener("pointerenter", () => contactSubmitBtn.setAttribute("data-hovered", "true"));
-  contactSubmitBtn.addEventListener("pointerleave", () => contactSubmitBtn.setAttribute("data-hovered", "false"));
+  // Format phone as a US number: (555) 123-4567, digits only, 10 max.
+  phoneInput.addEventListener("input", () => {
+    const digits = phoneInput.value.replace(/\D/g, "").slice(0, 10);
+    let formatted = digits;
+    if (digits.length > 6) formatted = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    else if (digits.length > 3) formatted = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    else if (digits.length > 0) formatted = `(${digits}`;
+    phoneInput.value = formatted;
+    clearFieldError(phoneInput);
+  });
+
+  [nameInput, emailInput, messageInput].forEach((el) => {
+    el.addEventListener("input", () => clearFieldError(el));
+  });
+
+  function fieldWrap(el: HTMLElement) {
+    return el.id === "contact-phone" ? el.closest("div")!.parentElement! : el.closest("div")!;
+  }
+
+  function showFieldError(el: HTMLElement, message: string) {
+    const wrap = fieldWrap(el);
+    const error = wrap.querySelector<HTMLParagraphElement>(".field-error");
+    if (error) {
+      error.textContent = message;
+      error.classList.remove("hidden");
+    }
+    (el.id === "contact-phone" ? el.closest(".phone-field") : el)?.classList.add("field-invalid");
+  }
+
+  function clearFieldError(el: HTMLElement) {
+    const wrap = fieldWrap(el);
+    const error = wrap.querySelector<HTMLParagraphElement>(".field-error");
+    error?.classList.add("hidden");
+    (el.id === "contact-phone" ? el.closest(".phone-field") : el)?.classList.remove("field-invalid");
+  }
+
+  function validate() {
+    let valid = true;
+
+    if (!nameInput.value.trim()) {
+      showFieldError(nameInput, "Please enter your name.");
+      valid = false;
+    }
+
+    const email = emailInput.value.trim();
+    if (!email) {
+      showFieldError(emailInput, "Please enter your email.");
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showFieldError(emailInput, "Please enter a valid email address.");
+      valid = false;
+    }
+
+    const phoneDigits = phoneInput.value.replace(/\D/g, "");
+    if (!phoneDigits) {
+      showFieldError(phoneInput, "Please enter your phone number.");
+      valid = false;
+    } else if (phoneDigits.length !== 10) {
+      showFieldError(phoneInput, "Please enter a valid 10-digit US phone number.");
+      valid = false;
+    }
+
+    if (!messageInput.value.trim()) {
+      showFieldError(messageInput, "Please tell us how we can help.");
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  function setButtonState(state: "idle" | "loading" | "sent") {
+    contactSubmitBtn.dataset.state = state;
+    contactSubmitBtn.disabled = state !== "idle";
+    btnLabel.textContent = state === "loading" ? "Sending…" : state === "sent" ? "Sent" : "Send message";
+  }
 
   contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     contactErrorMessage.classList.add("hidden");
-    contactSubmitBtn.disabled = true;
 
-    const data = Object.fromEntries(new FormData(contactForm).entries());
+    if (!validate()) return;
+
+    setButtonState("loading");
+
+    const phoneDigits = phoneInput.value.replace(/\D/g, "");
+    const data = {
+      ...Object.fromEntries(new FormData(contactForm).entries()),
+      phone: `+1${phoneDigits}`,
+    };
 
     try {
       const res = await fetch("/api/contact", {
@@ -133,35 +249,62 @@ import { faqItems } from "../data/site";
       const result = await res.json();
 
       if (result.ok) {
-        contactForm.classList.add("hidden");
-        contactSentMessage.classList.remove("hidden");
+        setButtonState("sent");
+        window.setTimeout(() => {
+          contactForm.classList.add("hidden");
+          contactSentMessage.classList.remove("hidden");
+        }, 650);
       } else {
+        setButtonState("idle");
         contactErrorMessage.textContent = result.error || "Something went wrong. Please try again.";
         contactErrorMessage.classList.remove("hidden");
       }
     } catch {
+      setButtonState("idle");
       contactErrorMessage.textContent = "Something went wrong. Please try again.";
       contactErrorMessage.classList.remove("hidden");
-    } finally {
-      contactSubmitBtn.disabled = false;
     }
   });
 </script>
 
 <style>
-  [data-morph] {
-    transition: transform 180ms ease, opacity 180ms ease;
+  .field-input {
+    transition: border-color 160ms ease, box-shadow 160ms ease;
   }
 
-  [data-morph]:hover {
+  .field-input:focus,
+  .field-input:focus-within {
+    outline: none;
+    border-color: var(--color-forest, #2f4133);
+    box-shadow: 0 0 0 3px rgba(47, 65, 51, 0.12);
+  }
+
+  .field-invalid {
+    border-color: #b91c1c !important;
+  }
+
+  .field-invalid:focus,
+  .field-invalid:focus-within {
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+  }
+
+  .submit-btn {
+    transition: transform 180ms ease, opacity 180ms ease, background-color 180ms ease;
+  }
+
+  .submit-btn:not(:disabled):hover {
     transform: scale(1.02);
   }
 
-  [data-morph]:active {
+  .submit-btn:not(:disabled):active {
     transform: scale(0.96);
   }
 
-  .morph-icon {
+  .submit-btn[data-state="sent"] {
+    background-color: #2f6b3f;
+  }
+
+  .btn-icon {
     position: relative;
     display: inline-flex;
     width: 16px;
@@ -169,7 +312,7 @@ import { faqItems } from "../data/site";
     flex-shrink: 0;
   }
 
-  .morph-icon svg {
+  .btn-icon svg {
     position: absolute;
     inset: 0;
     width: 16px;
@@ -177,18 +320,35 @@ import { faqItems } from "../data/site";
     transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
   }
 
-  .morph-check {
+  .icon-spinner,
+  .icon-check {
     opacity: 0;
     transform: scale(0.5);
   }
 
-  [data-morph][data-hovered="true"] .morph-send {
+  .icon-spinner {
+    animation: spin 0.7s linear infinite;
+  }
+
+  [data-state="loading"] .icon-send,
+  [data-state="sent"] .icon-send {
     opacity: 0;
     transform: scale(0.5);
   }
 
-  [data-morph][data-hovered="true"] .morph-check {
+  [data-state="loading"] .icon-spinner {
     opacity: 1;
     transform: scale(1);
+  }
+
+  [data-state="sent"] .icon-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>

@@ -153,7 +153,7 @@ export const faqItems = [
   {
     question: "How much does house cleaning cost in West Lake Hills?",
     answer:
-      "Most homes in West Lake Hills run 3,500 to 6,000 square feet. At our recurring bi-weekly rate, that typically prices between $360 and $580 per visit, with the first visit, a full deep clean, quoted separately. Use the calculator above for an estimate specific to your home.",
+      "Most homes in West Lake Hills run 3,500 to 6,000 square feet. At our recurring bi-weekly rate, that typically prices between $360 and $580 per visit, with the first visit, a full deep clean, quoted separately. Send us your home's details below for an estimate specific to your home.",
   },
   {
     question: "Do I need to be home?",

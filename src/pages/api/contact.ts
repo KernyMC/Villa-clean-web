@@ -6,6 +6,7 @@ export const prerender = false;
 interface ContactPayload {
   name?: string;
   email?: string;
+  phone?: string;
   message?: string;
 }
 
@@ -19,10 +20,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   const name = payload.name?.trim();
   const email = payload.email?.trim();
+  const phone = payload.phone?.trim();
   const message = payload.message?.trim();
 
-  if (!name || !email || !message) {
-    return json({ ok: false, error: "Name, email, and message are required." }, 400);
+  if (!name || !email || !phone || !message) {
+    return json({ ok: false, error: "Name, email, phone, and message are required." }, 400);
   }
 
   const { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, CONTACT_TO_EMAIL } = process.env;
@@ -44,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
       to: CONTACT_TO_EMAIL || SMTP_USER,
       replyTo: email,
       subject: `New contact form message from ${name}`,
-      text: `From: ${name} <${email}>\n\n${message}`,
+      text: `From: ${name} <${email}>\nPhone: ${phone}\n\n${message}`,
     });
   } catch (error) {
     console.error("Failed to send contact form email", error);

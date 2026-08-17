@@ -1,5 +1,24 @@
-# Site not ready for indexing yet — blocking everything (search engines and
-# AI crawlers alike) until content is finalized. See CLAUDE.md's "Going live"
-# checklist for what to change here once ready.
 User-agent: *
-Disallow: /
+Allow: /
+
+# AI search / GEO crawlers — explicitly allowed for AI Overviews, ChatGPT,
+# Perplexity, and Claude citation surfaces.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+Sitemap: https://villahomedetail.com/sitemap-index.xml
