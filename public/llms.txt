@@ -13,6 +13,8 @@
 ## Pages
 
 - [Homepage](https://villahomedetail.com/): Services, service areas, before/after gallery, FAQ, and contact form.
+- [Privacy Policy](https://villahomedetail.com/privacy-policy): What information is collected through the contact form and how it's used.
+- [Terms & Conditions](https://villahomedetail.com/terms): Terms governing use of the site and quote requests.
 
 ## Services
 

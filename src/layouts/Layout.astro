@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import { contact } from "../data/site";
 import { getSiteImages, urlFor } from "../lib/sanity";
+import CookieConsent from "../components/CookieConsent.astro";
 
 interface Props {
   title?: string;
@@ -22,8 +23,13 @@ const siteUrl = "https://villahomedetail.com";
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 
 const siteImages = await getSiteImages();
-const ogImage = siteImages?.aboutImage?.asset
-  ? urlFor(siteImages.aboutImage).width(1200).height(630).fit("crop").auto("format").url()
+// Prefer a hero (cleaning-in-action) photo over the founder portrait for link
+// previews — more representative of the service at a glance. Forced to JPEG
+// (not `.auto("format")`) because link-unfurling crawlers (WhatsApp, iMessage,
+// Facebook) often skip AVIF/WebP negotiation and fail to render the preview.
+const ogSourceImage = siteImages?.heroSlides?.find((slide) => slide.image?.asset)?.image ?? siteImages?.aboutImage;
+const ogImage = ogSourceImage?.asset
+  ? urlFor(ogSourceImage).width(1200).height(630).fit("crop").format("jpg").quality(85).url()
   : undefined;
 
 // Service-area business with no public storefront — per Google's structured-data
@@ -152,7 +158,17 @@ const websiteSchema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && (
+      <>
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:secure_url" content={ogImage} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={title} />
+      </>
+    )}
+    <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -162,10 +178,14 @@ const websiteSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+    {/* FAQPage schema must match visible page content — only the homepage renders the FAQ section. */}
+    {Astro.url.pathname === "/" && (
+      <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+    )}
   </head>
   <body>
     <slot />
+    <CookieConsent />
     <script>
       const translations: Record<string, string> = {
         "Pricing": "Precios",
@@ -237,6 +257,14 @@ const websiteSchema = {
         "8:00am – 6:00pm": "8:00 a. m. – 6:00 p. m.",
         "Kitchen": "Cocina",
         "Living Spaces": "Áreas de estar",
+        "Privacy Policy": "Política de privacidad",
+        "Terms & Conditions": "Términos y condiciones",
+        "By submitting, you agree to our Privacy Policy and Terms & Conditions. We only use your info to respond to your request.":
+          "Al enviar, aceptas nuestra Política de privacidad y Términos y condiciones. Solo usamos tu información para responder tu solicitud.",
+        "We use essential cookies to run this site, and the information you submit through our contact form (name, email, phone, message) only to respond to your request. See our Privacy Policy.":
+          "Usamos cookies esenciales para operar este sitio, y la información que envías por nuestro formulario de contacto (nombre, correo, teléfono, mensaje) solo para responder tu solicitud. Consulta nuestra Política de privacidad.",
+        "Dismiss": "Cerrar",
+        "Got it": "Entendido",
       };
 
       const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim();

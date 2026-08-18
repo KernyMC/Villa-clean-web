@@ -1,0 +1,66 @@
+---
+---
+
+<div
+  id="cookie-consent"
+  role="region"
+  aria-label="Cookie notice"
+  class="cookie-consent fixed inset-x-0 bottom-0 z-[95] hidden translate-y-full opacity-0"
+>
+  <div class="mx-auto flex max-w-4xl flex-col gap-3 border border-line bg-cream/97 px-5 py-4 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm sm:flex-row sm:items-center sm:gap-6 sm:rounded-t-md sm:px-6">
+    <p class="m-0 flex-1 text-[13px] leading-relaxed text-ink">
+      We use essential cookies to run this site, and the information you submit through our contact form (name, email, phone, message) only to respond to your request. See our
+      <a href="/privacy-policy" class="text-forest underline underline-offset-2 hover:text-brass">Privacy Policy</a>.
+    </p>
+    <div class="flex shrink-0 items-center gap-3">
+      <button
+        type="button"
+        id="cookie-dismiss"
+        class="text-[13px] text-ink/70 underline underline-offset-2 hover:text-ink"
+      >
+        Dismiss
+      </button>
+      <button
+        type="button"
+        id="cookie-accept"
+        class="bg-forest text-cream border-none px-4.5 py-2.5 text-[13px] tracking-wide rounded-sm cursor-pointer"
+      >
+        Got it
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = "villa-cookie-consent";
+  const banner = document.getElementById("cookie-consent")!;
+
+  // Nudge any bottom-anchored floating UI (e.g. the WhatsApp bubble) up above
+  // the banner while it's visible, via a shared CSS var, instead of hardcoding
+  // knowledge of what else lives in the corner.
+  const setOffset = (px: number) => document.documentElement.style.setProperty("--cookie-offset", `${px}px`);
+
+  if (!localStorage.getItem(STORAGE_KEY)) {
+    window.setTimeout(() => {
+      banner.classList.remove("hidden");
+      setOffset(banner.offsetHeight + 12);
+      requestAnimationFrame(() => banner.classList.remove("translate-y-full", "opacity-0"));
+    }, 800);
+  }
+
+  const dismiss = () => {
+    banner.classList.add("translate-y-full", "opacity-0");
+    setOffset(0);
+    window.setTimeout(() => banner.classList.add("hidden"), 300);
+    localStorage.setItem(STORAGE_KEY, "1");
+  };
+
+  document.getElementById("cookie-accept")!.addEventListener("click", dismiss);
+  document.getElementById("cookie-dismiss")!.addEventListener("click", dismiss);
+</script>
+
+<style>
+  .cookie-consent {
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms ease;
+  }
+</style>
