@@ -40,14 +40,14 @@ const areaImages = [
             class="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
             loading="lazy"
           />
-          <div class="hidden">
-            <span class="mb-3 block text-xs font-semibold uppercase tracking-[0.18em] text-cream/65">
+          <div class="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-7" style="background: linear-gradient(0deg, rgba(28,38,32,0.78) 0%, rgba(28,38,32,0.32) 55%, transparent 100%);">
+            <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-cream/70">
               0{index + 1} · Austin
             </span>
-            <h3 class="m-0 max-w-md font-serif font-serif-opt text-[clamp(1.5rem,3vw,2.4rem)] font-medium leading-tight text-cream">
+            <h3 class="m-0 max-w-md font-serif font-serif-opt text-[clamp(1.4rem,3vw,2.2rem)] font-medium leading-tight text-cream">
               {area.name}
             </h3>
-            <span class="mt-5 inline-flex translate-y-2 items-center gap-2 text-sm font-medium text-cream opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <span class="mt-4 inline-flex translate-y-2 items-center gap-2 text-sm font-medium text-cream opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
               Explore area
               <span aria-hidden="true" class="text-lg leading-none">↗</span>
             </span>
